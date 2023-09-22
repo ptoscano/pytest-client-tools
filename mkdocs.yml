@@ -1,0 +1,10 @@
+site_name: pytest-client-tools
+site_description: pytest plugin to test RHSM client tools
+site_author: Pino Toscano
+
+theme: readthedocs
+
+repo_url: https://github.com/RedHatInsights/pytest-client-tools
+
+pages:
+- Home: index.md

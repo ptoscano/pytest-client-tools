@@ -1,0 +1,6 @@
+[flake8]
+# same as in 'black'
+max-line-length = 88
+extend-exclude =
+    # default build directory
+    build/,
