@@ -7,7 +7,7 @@ import locale
 import pathlib
 import shutil
 import subprocess
-
+import os
 import pytest
 
 from .candlepin import Candlepin, ping_candlepin
@@ -21,6 +21,7 @@ from .subscription_manager import (
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
 
+from dynaconf import Dynaconf
 
 _MARKERS = {
     "candlepin": "tests requiring a self-deployed Candlepin",
@@ -103,14 +104,22 @@ def candlepin(request):
 
 
 @pytest.fixture(scope="session")
-def external_candlepin(test_config):
-    if not test_config.is_external:
+def external_candlepin(settings):
+    # TODO I miss a main story for this property to use
+    if not settings.get('is_external'):
         pytest.skip("missing external candlepin")
+        
+    if not(settings.get("rhsm.candlepin.host") and \
+           settings.get("rhsm.candlepin.port") and \
+           settings.get("rhsm.candlepin.prefix") and \
+           settings.get("rhsm.candlepin.insecure")):
+        pytest.skip("missing settings for external candlepin to connect")
+        
     candlepin = Candlepin(
-        host=test_config.get("candlepin", "host"),
-        port=test_config.get("candlepin", "port"),
-        prefix=test_config.get("candlepin", "prefix"),
-        insecure=test_config.get("candlepin", "insecure"),
+        host=settings.get("rhsm.candlepin.host"),
+        port=settings.get("rhsm.candlepin.port"),
+        prefix=settings.get("rhsm.candlepin.prefix"),
+        insecure=settings.get("rhsm.candlepin.insecure"),
     )
     yield candlepin
 
@@ -204,6 +213,14 @@ def pytest_addoption(parser):
         action="store_true",
         help="the container of Candlepin is already running",
     )
+
+@pytest.fixture(scope="function")
+def settings():
+    test_settings = Dynaconf(
+        load_env=True,
+        settings_files=["settings.toml",".secrets.toml"]
+    )
+    yield test_settings
 
 
 def pytest_collection_modifyitems(config, items):

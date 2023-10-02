@@ -29,6 +29,7 @@ setup(
     install_requires=[
         "pytest>=2.7.0",
         "requests",
+        "dynaconf",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
