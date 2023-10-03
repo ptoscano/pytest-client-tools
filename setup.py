@@ -27,6 +27,7 @@ setup(
     packages=find_packages(where="."),
     python_requires=">=3.6",
     install_requires=[
+        "dataclasses;python_version<'3.7'",
         "pytest>=2.7.0",
         "requests",
     ],
