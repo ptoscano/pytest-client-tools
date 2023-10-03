@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Red Hat
+# SPDX-License-Identifier: MIT
+
 site_name: pytest-client-tools
 site_description: pytest plugin to test RHSM client tools
 site_author: Pino Toscano
