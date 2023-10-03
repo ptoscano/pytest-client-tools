@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Red Hat
+# SPDX-License-Identifier: MIT
+
 name: lint
 
 on:
