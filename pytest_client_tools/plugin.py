@@ -78,7 +78,7 @@ def _create_candlepin_container():
 
 @pytest.fixture(scope="session")
 def test_config(request):
-    return TestConfig(request.config.getoption("--test-config"))
+    return TestConfig()
 
 
 @pytest.fixture(scope="session")
@@ -196,9 +196,6 @@ def rhc(save_rhc_files, test_config):
 
 def pytest_addoption(parser):
     group = parser.getgroup("client-tools")
-    group.addoption(
-        "--test-config", action="store", type=pathlib.Path, help="custom test config"
-    )
     group.addoption(
         "--candlepin-container-is-running",
         action="store_true",
