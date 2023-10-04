@@ -28,6 +28,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "dataclasses;python_version<'3.7'",
+        "dynaconf",
         "pytest>=2.7.0",
         "requests",
     ],
