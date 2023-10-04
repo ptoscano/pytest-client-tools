@@ -1,26 +1,41 @@
 # SPDX-FileCopyrightText: Red Hat
 # SPDX-License-Identifier: MIT
 
-import json
+from dynaconf import Dynaconf, Validator
 
 
 class TestConfig:
     def __init__(self, test_config):
-        self._test_config = self._load_config(test_config)
-        self._is_external = test_config is not None
+        self._settings = Dynaconf(
+            envvar_prefix="PYTEST_CLIENT_TOOLS",
+            settings_files=["settings.toml", ".secrets.toml"],
+        )
+        self._settings.validators.register(
+            Validator("candlepin.host"),
+            Validator("candlepin.port", gt=0, lt=65536, cast=int, is_type_of=int),
+            Validator("candlepin.prefix", startswith="/"),
+            Validator("candlepin.insecure", cast=bool, is_type_of=bool),
+            Validator("candlepin.username"),
+            Validator(
+                "candlepin.password",
+                must_exist=True,
+                when=Validator("candlepin.username", must_exist=True),
+            ),
+        )
+        self._settings.validators.validate()
 
     @property
     def is_external(self):
-        return self._is_external
-
-    def _load_config(self, test_config):
-        if not test_config:
-            return {}
-        with test_config.open("r") as f:
-            return json.load(f)
+        try:
+            return (
+                self._settings.get("candlepin.host") is not None
+                and self._settings.get("candlepin.port") is not None
+                and self._settings.get("candlepin.prefix") is not None
+                and self._settings.get("candlepin.username") is not None
+                and self._settings.get("candlepin.password") is not None
+            )
+        except KeyError:
+            return False
 
     def get(self, *path):
-        v = self._test_config
-        for p in path:
-            v = v[p]
-        return v
+        return self._settings[".".join(path)]
