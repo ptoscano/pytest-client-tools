@@ -62,7 +62,7 @@ class SubscriptionManager:
         return self.run("register", *args, *extra_args)
 
     def unregister(self):
-        self.run("unregister")
+        return self.run("unregister")
 
 
 def stop_rhsmcertd():

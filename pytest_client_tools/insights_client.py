@@ -52,7 +52,7 @@ class InsightsClient:
         )
 
     def register(self):
-        self.run("--register")
+        return self.run("--register")
 
     def unregister(self):
-        self.run("--unregister")
+        return self.run("--unregister")

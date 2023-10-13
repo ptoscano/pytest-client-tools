@@ -47,6 +47,7 @@ class Rhc:
         proc = self.run("connect", *args, *extra_args, check=False)
         if proc.returncode not in [0, 1]:
             proc.check_returncode()
+        return proc
 
     def disconnect(self):
-        self.run("disconnect")
+        return self.run("disconnect")
