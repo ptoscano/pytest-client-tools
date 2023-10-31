@@ -36,3 +36,8 @@ class Version:
 
     def __repr__(self):
         return f"Version({self.__str__()})"
+
+
+class NodeRunningData:
+    def __init__(self):
+        pass

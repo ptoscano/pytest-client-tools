@@ -20,6 +20,7 @@ from .subscription_manager import (
 )
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
+from .util import NodeRunningData
 
 
 _MARKERS = {
@@ -240,3 +241,13 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{mark}: {description}")
     config.addinivalue_line("markers", "jira(id): test for jira cards")
     locale.setlocale(locale.LC_ALL, "C.UTF-8")
+
+
+def pytest_runtest_protocol(item, nextitem):
+    if getattr(pytest, "_client_tools", None) is None:
+        pytest._client_tools = {}
+    pytest._client_tools[item.nodeid] = NodeRunningData()
+
+
+def pytest_runtest_logfinish(nodeid, location):
+    del pytest._client_tools[nodeid]
