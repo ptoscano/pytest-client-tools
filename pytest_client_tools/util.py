@@ -4,6 +4,7 @@
 import dataclasses
 import functools
 import pathlib
+import shutil
 import tempfile
 
 
@@ -39,7 +40,31 @@ class Version:
         return f"Version({self.__str__()})"
 
 
+class ArtifactsCollector:
+    def __init__(self, name, module=None, cls=None):
+        self._path = self._init_path(name, module, cls)
+
+    def _init_path(self, name, module, cls):
+        p = pathlib.Path.cwd()
+        p /= "artifacts"
+        if module:
+            p /= module.__name__
+        if cls:
+            p /= cls.__name__
+        p /= name
+        return p
+
+    def copy(self, src):
+        self._path.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, self._path)
+
+
 class NodeRunningData:
-    def __init__(self):
+    def __init__(self, item):
         self._tempdir = tempfile.TemporaryDirectory()
         self.tmp_path = pathlib.Path(self._tempdir.name)
+        self.artifacts = ArtifactsCollector(
+            name=item.name,
+            module=item.module,
+            cls=item.cls,
+        )

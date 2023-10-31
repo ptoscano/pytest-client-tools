@@ -4,7 +4,6 @@
 import contextlib
 import functools
 import locale
-import pathlib
 import shutil
 import subprocess
 
@@ -40,9 +39,7 @@ def _save_and_archive(files, subdir):
         def function_wrapper(*args, **kwargs):
             request = kwargs["request"]
             tmp_path = pytest._client_tools[request.node.nodeid].tmp_path
-            artifacts_path = pathlib.Path.cwd()
-            artifacts_path /= "artifacts"
-            artifacts_path.mkdir(parents=True, exist_ok=True)
+            artifacts_collector = pytest._client_tools[request.node.nodeid].artifacts
             backup_path = tmp_path / f"backup-{subdir}"
             backup_path.mkdir()
             for f in files:
@@ -52,15 +49,9 @@ def _save_and_archive(files, subdir):
                     else:
                         shutil.copy2(f.path, backup_path)
             yield from func(*args, **kwargs)
-            if request.module:
-                artifacts_path /= request.module.__name__
-            if request.cls:
-                artifacts_path /= request.cls.__name__
-            artifacts_path /= request.node.name
-            artifacts_path.mkdir(parents=True, exist_ok=True)
             for f in files:
                 with contextlib.suppress(FileNotFoundError):
-                    shutil.copy2(f.path, artifacts_path)
+                    artifacts_collector.copy(f.path)
                 with contextlib.suppress(FileNotFoundError):
                     shutil.move(backup_path / f.path.name, f.path)
 
@@ -246,7 +237,7 @@ def pytest_configure(config):
 def pytest_runtest_protocol(item, nextitem):
     if getattr(pytest, "_client_tools", None) is None:
         pytest._client_tools = {}
-    pytest._client_tools[item.nodeid] = NodeRunningData()
+    pytest._client_tools[item.nodeid] = NodeRunningData(item)
 
 
 def pytest_runtest_logfinish(nodeid, location):
