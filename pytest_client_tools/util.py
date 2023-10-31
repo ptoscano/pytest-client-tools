@@ -4,6 +4,7 @@
 import dataclasses
 import functools
 import pathlib
+import tempfile
 
 
 @dataclasses.dataclass
@@ -40,4 +41,5 @@ class Version:
 
 class NodeRunningData:
     def __init__(self):
-        pass
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.tmp_path = pathlib.Path(self._tempdir.name)

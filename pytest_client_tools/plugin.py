@@ -38,8 +38,8 @@ def _save_and_archive(files, subdir):
     def decorator_wrapper(func):
         @functools.wraps(func)
         def function_wrapper(*args, **kwargs):
-            tmp_path = kwargs["tmp_path"]
             request = kwargs["request"]
+            tmp_path = pytest._client_tools[request.node.nodeid].tmp_path
             artifacts_path = pathlib.Path.cwd()
             artifacts_path /= "artifacts"
             artifacts_path.mkdir(parents=True, exist_ok=True)
@@ -125,7 +125,7 @@ def any_candlepin(request, test_config):
 
 @pytest.fixture
 @_save_and_archive(files=SUBMAN_FILES_TO_SAVE, subdir="subman")
-def save_subman_files(tmp_path, request):
+def save_subman_files(request):
     yield
 
 
@@ -165,7 +165,7 @@ def _init_subman_from_candlepin(request):
 
 @pytest.fixture
 @_save_and_archive(files=INSIGHTS_CLIENT_FILES_TO_SAVE, subdir="insights-client")
-def save_insights_client_files(tmp_path, request):
+def save_insights_client_files(request):
     yield
 
 
@@ -181,7 +181,7 @@ def insights_client(save_insights_client_files):
 
 @pytest.fixture
 @_save_and_archive(files=RHC_FILES_TO_SAVE, subdir="rhc")
-def save_rhc_files(tmp_path, request):
+def save_rhc_files(request):
     yield
 
 
