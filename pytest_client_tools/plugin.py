@@ -4,6 +4,7 @@
 import contextlib
 import functools
 import locale
+import logging
 import shutil
 import subprocess
 
@@ -237,8 +238,14 @@ def pytest_configure(config):
 def pytest_runtest_protocol(item, nextitem):
     if getattr(pytest, "_client_tools", None) is None:
         pytest._client_tools = {}
-    pytest._client_tools[item.nodeid] = NodeRunningData(item)
+    node_running_data = NodeRunningData(item)
+    pytest._client_tools[item.nodeid] = node_running_data
+    logging.getLogger().addHandler(node_running_data.handler)
 
 
 def pytest_runtest_logfinish(nodeid, location):
-    del pytest._client_tools[nodeid]
+    node_running_data = pytest._client_tools.pop(nodeid)
+    node_running_data.handler.close()
+    if node_running_data.logfile.exists():
+        node_running_data.artifacts.copy(node_running_data.logfile)
+    logging.getLogger().handlers.remove(node_running_data.handler)

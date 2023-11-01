@@ -3,6 +3,7 @@
 
 import dataclasses
 import functools
+import logging
 import pathlib
 import shutil
 import tempfile
@@ -67,4 +68,11 @@ class NodeRunningData:
             name=item.name,
             module=item.module,
             cls=item.cls,
+        )
+        self.logfile = self.tmp_path / "test.log"
+        self.handler = logging.FileHandler(self.logfile, delay=True)
+        self.handler.setFormatter(
+            logging.Formatter(
+                "%(asctime)s: %(name)s: %(funcName)s: %(levelname)s: %(message)s"
+            )
         )
