@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 import pathlib
-import subprocess
 
-from .util import SavedFile
+from .util import SavedFile, logged_run
 
 
 SUBMAN_FILES_TO_SAVE = (
@@ -28,7 +27,7 @@ class SubscriptionManager:
         proc.check_returncode()
 
     def run(self, *args, check=True):
-        return subprocess.run(
+        return logged_run(
             ["subscription-manager"] + list(args), check=check, capture_output=True
         )
 
@@ -66,9 +65,9 @@ class SubscriptionManager:
 
 
 def stop_rhsmcertd():
-    subprocess.run(
+    logged_run(
         ["systemctl", "stop", "rhsmcertd.service"], check=True, capture_output=True
     )
-    pkill_proc = subprocess.run(["pkill", "-e", "-x", "rhsmcertd"], capture_output=True)
+    pkill_proc = logged_run(["pkill", "-e", "-x", "rhsmcertd"], capture_output=True)
     if pkill_proc.returncode not in [0, 1]:
         pkill_proc.check_returncode()

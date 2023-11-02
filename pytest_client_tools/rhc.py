@@ -3,9 +3,8 @@
 
 import json
 import pathlib
-import subprocess
 
-from .util import SavedFile
+from .util import SavedFile, logged_run
 
 
 RHC_FILES_TO_SAVE = (
@@ -25,7 +24,7 @@ class Rhc:
         return doc["rhsm_connected"]
 
     def run(self, *args, check=True):
-        return subprocess.run(["rhc"] + list(args), check=check, capture_output=True)
+        return logged_run(["rhc"] + list(args), check=check, capture_output=True)
 
     def connect(
         self, username=None, password=None, org=None, activationkey=None, *extra_args

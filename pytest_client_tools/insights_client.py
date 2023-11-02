@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 import pathlib
-import subprocess
 
-from .util import SavedFile
+from .util import SavedFile, logged_run
 
 
 INSIGHTS_CLIENT_FILES_TO_SAVE = (
@@ -34,7 +33,7 @@ class InsightsClient:
 
     @property
     def is_registered(self):
-        proc = self.run("--status", check=False)
+        proc = logged_run("--status", check=False)
         print(proc)
         if proc.returncode in [0, 1] and any(
             i in proc.stdout for i in [b"NOT", b"unregistered"]
@@ -47,7 +46,7 @@ class InsightsClient:
         proc.check_returncode()
 
     def run(self, *args, check=True):
-        return subprocess.run(
+        return logged_run(
             ["insights-client"] + list(args), check=check, capture_output=True
         )
 

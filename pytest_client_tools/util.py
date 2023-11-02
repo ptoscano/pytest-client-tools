@@ -6,6 +6,7 @@ import functools
 import logging
 import pathlib
 import shutil
+import subprocess
 import tempfile
 
 
@@ -76,3 +77,7 @@ class NodeRunningData:
                 "%(asctime)s: %(name)s: %(funcName)s: %(levelname)s: %(message)s"
             )
         )
+
+
+def logged_run(*args, **kwargs):
+    return subprocess.run(*args, **kwargs)
