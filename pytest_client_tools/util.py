@@ -9,6 +9,8 @@ import shutil
 import subprocess
 import tempfile
 
+from .logger import LOGGER
+
 
 @dataclasses.dataclass
 class SavedFile:
@@ -80,4 +82,10 @@ class NodeRunningData:
 
 
 def logged_run(*args, **kwargs):
-    return subprocess.run(*args, **kwargs)
+    LOGGER.debug("running %s with options %s", list(*args), kwargs)
+    check = kwargs.pop("check", False)
+    proc = subprocess.run(*args, **kwargs)
+    LOGGER.debug("result: %s", proc)
+    if check:
+        proc.check_returncode()
+    return proc
