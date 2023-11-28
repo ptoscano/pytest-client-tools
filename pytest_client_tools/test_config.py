@@ -6,7 +6,9 @@ from dynaconf import Dynaconf, Validator
 
 class TestConfig:
     def __init__(self):
-        self._settings = Dynaconf()
+        self._settings = Dynaconf(
+            envvar_prefix = "PYTEST_CLIENT_TOOLS"
+        )
         self._settings.validators.register(
             Validator("candlepin.host"),
             Validator("candlepin.port", gt=0, lt=65536, cast=int, is_type_of=int),

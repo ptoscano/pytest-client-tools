@@ -29,12 +29,12 @@ and some helper bits:
 
 ## Configuration
 
-There is a fixture =test_config= in the defined fixtures.
+There is a fixture `test_config` in the defined fixtures.
 It uses [Dynaconf library](https://dynaconf.com) to load configuration
 properties.
 
 It is necesary to set a few env variables to tell dynaconf what
-properties source to use:
+source of the properties to use:
 
 ```bash
 export SETTINGS_FILES_FOR_DYNACONF="['settings.toml','.secrets.yaml']"
@@ -49,7 +49,7 @@ The example above specifies that dynaconf
 
 ### Environments in settings properties
 
-Dynaconf can provide you a different values of the properties
+Dynaconf can provide you different values of the properties
 depending on a specified environment (is it `ENV_FOR_DYNACONF`
 env variable).
 
@@ -59,19 +59,20 @@ an example of settings.yaml file:
 development:
   account:
     username: MY_NAME
-	password: MY_PASSWORD
+    password: MY_PASSWORD
 production:
   account:
     username: MY_PROD_NAME
-	password: MY_PROD_PASSWORD
+    password: MY_PROD_PASSWORD
 stage:
   account:
     username: MY_STAGE_NAME
-	password: MY_STAGE_PASSWORD
+    password: MY_STAGE_PASSWORD
 ```
 
-Specifying an env var `ENV_FOR_DYNACONF` you tell dynaconf to use the
-proper section to load properties.
+You will tell dynaconf to use the proper section to load properties 
+by specifying an env var `ENV_FOR_DYNACONF`.
+
 
 ## License
 
