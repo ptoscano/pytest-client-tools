@@ -3,6 +3,7 @@
 
 import json
 import pathlib
+import subprocess
 
 from .util import SavedFile, logged_run
 
@@ -24,7 +25,12 @@ class Rhc:
         return doc["rhsm_connected"]
 
     def run(self, *args, check=True):
-        return logged_run(["rhc"] + list(args), check=check, capture_output=True)
+        return logged_run(
+            ["rhc"] + list(args),
+            check=check,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
 
     def connect(
         self, username=None, password=None, org=None, activationkey=None, *extra_args

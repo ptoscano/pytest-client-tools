@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import pathlib
+import subprocess
 
 from .util import SavedFile, logged_run
 
@@ -47,7 +48,10 @@ class InsightsClient:
 
     def run(self, *args, check=True):
         return logged_run(
-            ["insights-client"] + list(args), check=check, capture_output=True
+            ["insights-client"] + list(args),
+            check=check,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
 
     def register(self):

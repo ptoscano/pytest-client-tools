@@ -53,7 +53,9 @@ class Podman:
             args.append(":".join([str(p) for p in port_mapping]))
         args.append(self._image)
 
-        proc = subprocess.run(args, check=True, capture_output=True)
+        proc = subprocess.run(
+            args, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         self._running_id = proc.stdout.rstrip().decode()
 
     def stop(self):
@@ -61,6 +63,9 @@ class Podman:
             return
 
         subprocess.run(
-            ["podman", "stop", self._running_id], check=True, capture_output=True
+            ["podman", "stop", self._running_id],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         self._running_id = None
