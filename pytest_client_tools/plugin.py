@@ -47,7 +47,7 @@ def _save_and_archive(files, subdir):
             for f in files:
                 with contextlib.suppress(FileNotFoundError):
                     if f.remove_at_start:
-                        shutil.move(f.path, backup_path)
+                        shutil.move(str(f.path), str(backup_path))
                     else:
                         shutil.copy2(f.path, backup_path)
             yield from func(*args, **kwargs)
@@ -55,7 +55,7 @@ def _save_and_archive(files, subdir):
                 with contextlib.suppress(FileNotFoundError):
                     artifacts_collector.copy(f.path)
                 with contextlib.suppress(FileNotFoundError):
-                    shutil.move(backup_path / f.path.name, f.path)
+                    shutil.move(str(backup_path / f.path.name), str(f.path))
 
         return function_wrapper
 
