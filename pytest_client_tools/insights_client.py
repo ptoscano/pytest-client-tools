@@ -34,7 +34,7 @@ class InsightsClient:
 
     @property
     def is_registered(self):
-        proc = logged_run("--status", check=False)
+        proc = self.run("--status", check=False)
         print(proc)
         if proc.returncode in [0, 1] and any(
             i in proc.stdout for i in [b"NOT", b"unregistered"]
