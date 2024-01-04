@@ -27,6 +27,53 @@ and some helper bits:
 - `insights_client` -- `insights-client`
 - `rhc` -- `rhc`
 
+## Configuration
+
+There is a fixture `test_config` in the defined fixtures.
+It uses [Dynaconf library](https://dynaconf.com) to load configuration
+properties.
+
+It is necesary to set a few env variables to tell dynaconf what
+source of the properties to use:
+
+```bash
+export SETTINGS_FILES_FOR_DYNACONF="['settings.toml','.secrets.yaml']"
+export ENV_FOR_DYNACONF=stage
+```
+
+The default source of the properties to load is a shell environment.
+
+The example above specifies that dynaconf 
+- will load configuration from files `settings.toml` and `.secrets.yaml`
+- will use a section `stage` to load all properties.
+
+### Environments in settings properties
+
+Dynaconf can provide you different values of the properties
+depending on a specified environment (is it `ENV_FOR_DYNACONF`
+env variable).
+
+an example of settings.yaml file:
+
+```yaml
+development:
+  account:
+    username: MY_NAME
+    password: MY_PASSWORD
+production:
+  account:
+    username: MY_PROD_NAME
+    password: MY_PROD_PASSWORD
+stage:
+  account:
+    username: MY_STAGE_NAME
+    password: MY_STAGE_PASSWORD
+```
+
+You will tell dynaconf to use the proper section to load properties 
+by specifying an env var `ENV_FOR_DYNACONF`.
+
+
 ## License
 
 Distributed under the terms of the `MIT`_ license.
