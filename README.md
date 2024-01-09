@@ -27,6 +27,19 @@ and some helper bits:
 - `insights_client` -- `insights-client`
 - `rhc` -- `rhc`
 
+## Configuration
+The library provides dynaconf object to load all config properties
+required by tests. see  [Dynaconf library](https://dynaconf.com) for
+more details.
+
+There are a few cases the library can be used at
+1) upstream environment
+2) CI environment
+3) stage environment
+4) production environment
+
+For more details see [Configuration](CONFIGURATION.md)
+
 ## License
 
 Distributed under the terms of the `MIT`_ license.
