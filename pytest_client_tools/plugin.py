@@ -22,7 +22,7 @@ from .subscription_manager import (
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
 from .util import NodeRunningData
-
+from .dynaconf import _settings
 
 _MARKERS = {
     "candlepin": "tests requiring a self-deployed Candlepin",
@@ -233,8 +233,11 @@ def pytest_configure(config):
     for mark, description in _MARKERS.items():
         config.addinivalue_line("markers", f"{mark}: {description}")
     config.addinivalue_line("markers", "jira(id): test for jira cards")
-    locale.setlocale(locale.LC_ALL, "C.UTF-8")
+    config.addinivalue_line(
+        "markers", "env(name): mark test to run only in the proper environment (it is a Dynaconf feature)"
+    )
 
+    locale.setlocale(locale.LC_ALL, "C.UTF-8")
 
 def pytest_runtestloop(session):
     # set the log level for our logger to the effective one set by pytest;
@@ -256,3 +259,11 @@ def pytest_runtest_logfinish(nodeid, location):
     if node_running_data.logfile.exists():
         node_running_data.artifacts.copy(node_running_data.logfile)
     logging.getLogger().handlers.remove(node_running_data.handler)
+    
+def pytest_runtest_setup(item):
+    envnames = [mark.args[0] for mark in item.iter_markers(name="env")]
+    the_environment = _settings.get('env_for_dynaconf') or "development"
+    if envnames and the_environment not in envnames:
+        pytest.skip(
+            f"test requires a dynaconf environment to be one of those: {envnames}")
+            
