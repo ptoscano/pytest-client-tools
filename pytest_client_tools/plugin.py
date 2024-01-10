@@ -262,7 +262,8 @@ def pytest_runtest_logfinish(nodeid, location):
 
 def pytest_runtest_setup(item):
     envnames = [mark.args[0] for mark in item.iter_markers(name="env")]
-    the_environment = _settings.get('env_for_dynaconf') or "development"
+    the_environment = _settings.get("env_for_dynaconf") or "development"
     if envnames and the_environment not in envnames:
         pytest.skip(
-            f"test requires a dynaconf environment to be one of those: {envnames}")
+            f"test requires a dynaconf environment to be one of those: {envnames}"
+        )
