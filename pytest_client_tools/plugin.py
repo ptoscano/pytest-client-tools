@@ -24,7 +24,7 @@ from .subscription_manager import (
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
 from .util import NodeRunningData
-from .dynaconf import _settings
+from .config import _settings
 
 _MARKERS = {
     "candlepin": "tests requiring a self-deployed Candlepin",
