@@ -259,11 +259,10 @@ def pytest_runtest_logfinish(nodeid, location):
     if node_running_data.logfile.exists():
         node_running_data.artifacts.copy(node_running_data.logfile)
     logging.getLogger().handlers.remove(node_running_data.handler)
-    
+
 def pytest_runtest_setup(item):
     envnames = [mark.args[0] for mark in item.iter_markers(name="env")]
     the_environment = _settings.get('env_for_dynaconf') or "development"
     if envnames and the_environment not in envnames:
         pytest.skip(
             f"test requires a dynaconf environment to be one of those: {envnames}")
-            

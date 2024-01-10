@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Red Hat
+# SPDX-License-Identifier: MIT
+
 import pytest
 from dynaconf import Dynaconf
 
@@ -26,5 +29,3 @@ def settings(scope="session"):
     )
     _settings.validators.validate()
     return _settings
-
-
