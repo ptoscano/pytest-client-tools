@@ -237,7 +237,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "jira(id): test for jira cards")
     config.addinivalue_line(
         "markers",
-        "env(name): required environment for a test (it is a Dynaconf feature)"
+        "env(name): required environment for a test (it is a Dynaconf feature)",
     )
 
     locale.setlocale(locale.LC_ALL, "C.UTF-8")
@@ -270,5 +270,5 @@ def pytest_runtest_setup(item):
     the_environment = _settings.get("env_for_dynaconf") or "development"
     if envnames and the_environment not in envnames:
         pytest.skip(
-            f"test requires a dynaconf environment to be one of those: {envnames}"
+            f"test requires a dynaconf environment to be one of those: {envnames}",
         )

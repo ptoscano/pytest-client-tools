@@ -13,6 +13,7 @@ _settings = Dynaconf(
     settings_files=["settings.toml", ".secrets.toml"],
 )
 
+
 @pytest.fixture
 def settings(scope="session"):
     _settings.validators.register(
