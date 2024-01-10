@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import pytest
-from dynaconf import Dynaconf
+from dynaconf import Dynaconf, Validator
 
 #
 # it is necessary to use define global variable since dynaconf settings object
