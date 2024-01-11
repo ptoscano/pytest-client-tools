@@ -123,7 +123,7 @@ def save_subman_files(request):
 
 
 @pytest.fixture
-def subman(save_subman_files, test_config, request):
+def subman(save_subman_files, request):
     candlepin_fixture = next(
         (i for i in request.node.fixturenames if i in _CANDLEPIN_FIXTURES),
         None,
