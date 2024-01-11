@@ -122,8 +122,7 @@ def save_subman_files(request):
     yield
 
 
-@pytest.fixture
-def subman(save_subman_files, request):
+def _subman_common(request):
     candlepin_fixture = next(
         (i for i in request.node.fixturenames if i in _CANDLEPIN_FIXTURES),
         None,
@@ -151,6 +150,11 @@ def subman(save_subman_files, request):
         with contextlib.suppress(subprocess.SubprocessError):
             subman.unregister()
         stop_rhsmcertd()
+
+
+@pytest.fixture
+def subman(save_subman_files, request):
+    yield from _subman_common(request)
 
 
 @pytest.fixture
