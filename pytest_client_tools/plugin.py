@@ -123,37 +123,34 @@ def save_subman_files(request):
 
 
 @pytest.fixture
-def subman(save_subman_files, test_config):
+def subman(save_subman_files, test_config, request):
+    candlepin_fixture = next(
+        (i for i in request.node.fixturenames if i in _CANDLEPIN_FIXTURES),
+        None,
+    )
     subman = SubscriptionManager()
     # TODO enable debug also for all the categories
     subman.config(
-        server_hostname="invalid-hostname-set-to-avoid-mistakes",
         logging_default_log_level="DEBUG",
     )
+    if candlepin_fixture:
+        candlepin = request.getfixturevalue(candlepin_fixture)
+        subman.config(
+            server_hostname=candlepin.host,
+            server_port=candlepin.port,
+            server_prefix=candlepin.prefix,
+            server_insecure="1" if candlepin.insecure else "0",
+        )
+    else:
+        subman.config(
+            server_hostname="invalid-hostname-set-to-avoid-mistakes",
+        )
     try:
         yield subman
     finally:
         with contextlib.suppress(subprocess.SubprocessError):
             subman.unregister()
         stop_rhsmcertd()
-
-
-@pytest.fixture
-def _init_subman_from_candlepin(request):
-    assert "subman" in request.node.fixturenames
-    candlepin_fixture = next(
-        (i for i in request.node.fixturenames if i in _CANDLEPIN_FIXTURES),
-        None,
-    )
-    assert candlepin_fixture
-    subman = request.getfixturevalue("subman")
-    candlepin = request.getfixturevalue(candlepin_fixture)
-    subman.config(
-        server_hostname=candlepin.host,
-        server_port=candlepin.port,
-        server_prefix=candlepin.prefix,
-        server_insecure="1" if candlepin.insecure else "0",
-    )
 
 
 @pytest.fixture
@@ -214,10 +211,6 @@ def pytest_collection_modifyitems(config, items):
                 item.fixturenames.append("subman")
             if "insights_client" not in item.fixturenames:
                 item.fixturenames.append("insights_client")
-        if "subman" in item.fixturenames and any(
-            i in item.fixturenames for i in _CANDLEPIN_FIXTURES
-        ):
-            item.fixturenames.append("_init_subman_from_candlepin")
         for jira_marker in item.iter_markers(name="jira"):
             for jira in jira_marker.args:
                 jira_item = jira.lower()
