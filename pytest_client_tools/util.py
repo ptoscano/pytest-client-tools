@@ -45,7 +45,7 @@ class Version:
 
 
 class ArtifactsCollector:
-    def __init__(self, name, module=None, cls=None):
+    def __init__(self, name=None, module=None, cls=None):
         self._path = self._init_path(name, module, cls)
 
     def _init_path(self, name, module, cls):
@@ -55,7 +55,8 @@ class ArtifactsCollector:
             p /= module.__name__
         if cls:
             p /= cls.__name__
-        p /= name
+        if name:
+            p /= name
         return p
 
     def copy(self, src):
