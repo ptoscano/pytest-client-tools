@@ -65,13 +65,13 @@ class ArtifactsCollector:
 
 
 class NodeRunningData:
-    def __init__(self, item):
+    def __init__(self, item=None):
         self._tempdir = tempfile.TemporaryDirectory()
         self.tmp_path = pathlib.Path(self._tempdir.name)
         self.artifacts = ArtifactsCollector(
-            name=item.name,
-            module=item.module,
-            cls=item.cls,
+            name=item.name if item else None,
+            module=item.module if item else None,
+            cls=item.cls if item else None,
         )
         self.logfile = self.tmp_path / "test.log"
         self.handler = logging.FileHandler(self.logfile, delay=True)
