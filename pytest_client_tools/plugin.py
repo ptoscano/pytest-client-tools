@@ -237,11 +237,10 @@ def pytest_runtestloop(session):
     # set the log level for our logger to the effective one set by pytest;
     # this cannot be done in pytest_configure(), as it is not set yet
     LOGGER.setLevel(logging.getLogger().getEffectiveLevel())
+    pytest._client_tools = {}
 
 
 def pytest_runtest_protocol(item, nextitem):
-    if getattr(pytest, "_client_tools", None) is None:
-        pytest._client_tools = {}
     node_running_data = NodeRunningData(item)
     pytest._client_tools[item.nodeid] = node_running_data
     logging.getLogger().addHandler(node_running_data.handler)
