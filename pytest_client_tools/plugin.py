@@ -168,6 +168,17 @@ def subman(save_subman_files, request):
     yield from _subman_common(request)
 
 
+@pytest.fixture(scope="session")
+@_save_and_archive(files=SUBMAN_FILES_TO_SAVE, subdir="subman")
+def save_subman_global_files(request):
+    yield
+
+
+@pytest.fixture(scope="session")
+def subman_global(save_subman_global_files, request):
+    yield from _subman_common(request)
+
+
 @pytest.fixture
 @_save_and_archive(files=INSIGHTS_CLIENT_FILES_TO_SAVE, subdir="insights-client")
 def save_insights_client_files(request):
