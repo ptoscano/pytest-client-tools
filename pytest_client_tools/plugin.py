@@ -130,8 +130,12 @@ def save_subman_files(request):
 
 
 def _subman_common(request):
+    if request.fixturename:
+        fixturenames = request.fixturenames
+    else:
+        fixturenames = request.node.fixturenames
     candlepin_fixture = next(
-        (i for i in request.node.fixturenames if i in _CANDLEPIN_FIXTURES),
+        (i for i in fixturenames if i in _CANDLEPIN_FIXTURES),
         None,
     )
     subman = SubscriptionManager()
