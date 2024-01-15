@@ -139,28 +139,34 @@ def _subman_common(request):
         None,
     )
     subman = SubscriptionManager()
-    # TODO enable debug also for all the categories
-    subman.config(
-        logging_default_log_level="DEBUG",
+    has_subman_global = (
+        request.fixturename != "subman_global"
+        and "subman_global" in request.fixturenames
     )
-    if candlepin_fixture:
-        candlepin = request.getfixturevalue(candlepin_fixture)
+    if not has_subman_global:
+        # TODO enable debug also for all the categories
         subman.config(
-            server_hostname=candlepin.host,
-            server_port=candlepin.port,
-            server_prefix=candlepin.prefix,
-            server_insecure="1" if candlepin.insecure else "0",
+            logging_default_log_level="DEBUG",
         )
-    else:
-        subman.config(
-            server_hostname="invalid-hostname-set-to-avoid-mistakes",
-        )
+        if candlepin_fixture:
+            candlepin = request.getfixturevalue(candlepin_fixture)
+            subman.config(
+                server_hostname=candlepin.host,
+                server_port=candlepin.port,
+                server_prefix=candlepin.prefix,
+                server_insecure="1" if candlepin.insecure else "0",
+            )
+        else:
+            subman.config(
+                server_hostname="invalid-hostname-set-to-avoid-mistakes",
+            )
     try:
         yield subman
     finally:
-        with contextlib.suppress(subprocess.SubprocessError):
-            subman.unregister()
-        stop_rhsmcertd()
+        if not has_subman_global:
+            with contextlib.suppress(subprocess.SubprocessError):
+                subman.unregister()
+            stop_rhsmcertd()
 
 
 @pytest.fixture
