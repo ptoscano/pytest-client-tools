@@ -139,11 +139,11 @@ def _subman_common(request):
         None,
     )
     subman = SubscriptionManager()
-    has_subman_global = (
-        request.fixturename != "subman_global"
-        and "subman_global" in request.fixturenames
+    has_subman_session = (
+        request.fixturename != "subman_session"
+        and "subman_session" in request.fixturenames
     )
-    if not has_subman_global:
+    if not has_subman_session:
         # TODO enable debug also for all the categories
         subman.config(
             logging_default_log_level="DEBUG",
@@ -163,7 +163,7 @@ def _subman_common(request):
     try:
         yield subman
     finally:
-        if not has_subman_global:
+        if not has_subman_session:
             with contextlib.suppress(subprocess.SubprocessError):
                 subman.unregister()
             stop_rhsmcertd()
@@ -176,12 +176,12 @@ def subman(save_subman_files, request):
 
 @pytest.fixture(scope="session")
 @_save_and_archive(files=SUBMAN_FILES_TO_SAVE, subdir="subman")
-def save_subman_global_files(request):
+def save_subman_session_files(request):
     yield
 
 
 @pytest.fixture(scope="session")
-def subman_global(save_subman_global_files, request):
+def subman_session(save_subman_session_files, request):
     yield from _subman_common(request)
 
 
