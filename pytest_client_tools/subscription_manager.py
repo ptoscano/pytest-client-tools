@@ -37,7 +37,7 @@ class SubscriptionManager:
 
     def config(self, **kwargs):
         args = []
-        sections = ("server_", "rhsm_", "logging_")
+        sections = ("server_", "rhsm_", "rhsmcertd_", "logging_")
         for k, v in kwargs.items():
             if k.startswith(sections) and v is not None:
                 args.append(f"--{k.replace('_', '.', 1)}={v}")
