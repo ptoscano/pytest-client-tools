@@ -7,6 +7,8 @@ from dynaconf import Dynaconf, Validator
 class TestConfig:
     def __init__(self):
         self._settings = Dynaconf(
+            default_env="default",
+            environments=True,
             envvar_prefix="PYTEST_CLIENT_TOOLS",
             settings_files=["settings.toml", ".secrets.toml"],
         )
