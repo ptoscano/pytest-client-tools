@@ -5,9 +5,36 @@ site_name: pytest-client-tools
 site_description: pytest plugin to test RHSM client tools
 site_author: Pino Toscano
 
-theme: readthedocs
+theme:
+  name: material
+  highlightjs: true
+  hljs_languages:
+    - python
+    - toml
 
-repo_url: https://github.com/RedHatInsights/pytest-client-tools
+repo_url: https://github.com/ptoscano/pytest-client-tools
 
-pages:
-- Home: index.md
+nav:
+  - Home: index.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - autorefs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: sphinx
+            heading_level: 3
+            show_source: false

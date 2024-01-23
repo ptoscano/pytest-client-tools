@@ -7,6 +7,7 @@ __pycache__/
 .tox/
 build/
 env/
+site/
 
 # Ignore dynaconf secret files
 .secrets.*
