@@ -103,7 +103,7 @@ class InsightsClientConfig:
 
 class InsightsClient:
     def __init__(self):
-        pass
+        self.config = InsightsClientConfig()
 
     @property
     def is_registered(self):
