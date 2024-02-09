@@ -76,6 +76,29 @@ class InsightsClientConfig:
     _KEYS_FLOAT = {
         "http_timeout",
     }
+    # string config keys
+    _KEYS_STRING = {
+        "ansible_host",
+        "authmethod",
+        "base_url",
+        "branch_info",
+        "branch_info_url",
+        "compressor",
+        "content_redaction_file",
+        "display_name",
+        "egg_gpg_path",
+        "egg_path",
+        "group",
+        "logging_file",
+        "loglevel",
+        "password",
+        "proxy",
+        "redaction_file",
+        "remove_file",
+        "tags_file",
+        "upload_url",
+        "username",
+    }
 
     def __init__(self, path="/etc/insights-client/insights-client.conf"):
         self._path = path
@@ -93,8 +116,10 @@ class InsightsClientConfig:
             read_func = self._config.getint
         elif name in self._KEYS_FLOAT:
             read_func = self._config.getfloat
-        else:
+        elif name in self._KEYS_STRING:
             read_func = self._config.get
+        else:
+            raise KeyError(name)
         try:
             return read_func("insights-client", name)
         except (configparser.NoSectionError, configparser.NoOptionError):
