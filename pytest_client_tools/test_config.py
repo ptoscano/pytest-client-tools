@@ -23,6 +23,7 @@ class TestConfig:
                 must_exist=True,
                 when=Validator("candlepin.username", must_exist=True),
             ),
+            Validator("insights.legacy_upload", cast=bool, is_type_of=bool),
         )
         self._settings.validators.validate()
 
