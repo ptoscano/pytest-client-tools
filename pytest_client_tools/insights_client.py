@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import configparser
+import contextlib
 import pathlib
 import subprocess
 
@@ -108,6 +109,8 @@ class InsightsClientConfig:
         with open(self._path) as f:
             self._config = configparser.ConfigParser()
             self._config.read_file(f, source=self._path)
+            with contextlib.suppress(configparser.DuplicateSectionError):
+                self._config.add_section("insights-client")
 
     def __getattr__(self, name):
         if name in self._KEYS_BOOL:
@@ -122,7 +125,7 @@ class InsightsClientConfig:
             raise KeyError(name)
         try:
             return read_func("insights-client", name)
-        except (configparser.NoSectionError, configparser.NoOptionError):
+        except configparser.NoOptionError:
             raise KeyError(name)
 
 
