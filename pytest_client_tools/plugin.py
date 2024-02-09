@@ -196,7 +196,9 @@ def insights_client(save_insights_client_files, test_config):
     insights_client = InsightsClient()
     save_config = False
     with contextlib.suppress(KeyError):
-        insights_client.config.legacy_upload = test_config.get("insights.legacy_upload")
+        legacy_upload = test_config.get("insights.legacy_upload")
+        if legacy_upload is not None:
+            insights_client.config.legacy_upload = legacy_upload
         save_config = True
     if save_config:
         insights_client.config.save()
