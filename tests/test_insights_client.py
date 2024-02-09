@@ -83,6 +83,12 @@ http_timeout=120
     # unknown key; setting will set a class attribute, not a config value
     conf.unknown = "see"
     assert conf.unknown == "see"
+    # save and check the result
+    conf.save()
+    conf_file_text = conf_file.read_text()
+    assert "cmd_timeout=60" in conf_file_text
+    assert "loglevel=DEBUG" in conf_file_text
+    assert "see" not in conf_file_text
 
 
 def test_config_reload(tmp_path):

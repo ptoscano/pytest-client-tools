@@ -112,6 +112,10 @@ class InsightsClientConfig:
             with contextlib.suppress(configparser.DuplicateSectionError):
                 self._config.add_section("insights-client")
 
+    def save(self):
+        with open(self._path, "w") as f:
+            self._config.write(f, space_around_delimiters=False)
+
     def __getattr__(self, name):
         if name in self._KEYS_BOOL:
             read_func = self._config.getboolean
