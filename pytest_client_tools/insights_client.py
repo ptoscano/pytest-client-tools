@@ -128,6 +128,14 @@ class InsightsClientConfig:
         except configparser.NoOptionError:
             raise KeyError(name)
 
+    def __setattr__(self, name, value):
+        if name in (
+            self._KEYS_BOOL | self._KEYS_INT | self._KEYS_FLOAT | self._KEYS_STRING
+        ):
+            self._config.set("insights-client", name, str(value))
+            return
+        super().__setattr__(name, value)
+
 
 class InsightsClient:
     def __init__(self):

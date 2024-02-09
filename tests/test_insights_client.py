@@ -61,6 +61,30 @@ http_timeout=120
     assert isinstance(conf.http_timeout, float)
 
 
+def test_config_set_keys(tmp_path):
+    conf_file = tmp_path / "file.conf"
+    conf_file.write_text(
+        """[insights-client]
+auto_config=True
+authmethod=CERT
+cmd_timeout=120
+http_timeout=120
+        """
+    )
+    conf = InsightsClientConfig(conf_file)
+    # existing key
+    conf.cmd_timeout = 60
+    assert conf.cmd_timeout == 60
+    # missing but known key
+    with pytest.raises(KeyError):
+        assert conf.loglevel == "DEBUG"
+    conf.loglevel = "DEBUG"
+    assert conf.loglevel == "DEBUG"
+    # unknown key; setting will set a class attribute, not a config value
+    conf.unknown = "see"
+    assert conf.unknown == "see"
+
+
 def test_config_reload(tmp_path):
     conf_file = tmp_path / "file.conf"
     conf_file.write_text(
