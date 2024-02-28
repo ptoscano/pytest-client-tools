@@ -14,27 +14,26 @@ class TestConfig:
         )
         self._settings.validators.register(
             Validator("candlepin.host"),
-            Validator("candlepin.port", gt=0, lt=65536, cast=int, is_type_of=int),
+            Validator("candlepin.port", gt=0, lt=65536, is_type_of=int),
             Validator("candlepin.prefix", startswith="/"),
-            Validator("candlepin.insecure", cast=bool, is_type_of=bool),
+            Validator("candlepin.insecure", is_type_of=bool),
             Validator("candlepin.username"),
             Validator(
                 "candlepin.password",
                 must_exist=True,
                 when=Validator("candlepin.username", must_exist=True),
             ),
-            Validator("candlepin.activation_keys", cast=list, is_type_of=list),
+            Validator("candlepin.activation_keys", is_type_of=list),
             Validator(
                 "candlepin.org",
                 must_exist=True,
                 when=Validator(
                     "candlepin.activation_keys",
-                    cast=list,
                     is_type_of=list,
                     must_exist=True,
                 ),
             ),
-            Validator("insights.legacy_upload", cast=bool, is_type_of=bool),
+            Validator("insights.legacy_upload", is_type_of=bool),
         )
         self._settings.validators.validate()
 
