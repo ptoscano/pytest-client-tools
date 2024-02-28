@@ -150,21 +150,22 @@ class InsightsClient:
         proc = self.run("--status", check=False)
         print(proc)
         if proc.returncode in [0, 1] and any(
-            i in proc.stdout for i in [b"NOT", b"unregistered"]
+            i in proc.stdout for i in ["NOT", "unregistered"]
         ):
             return False
         if proc.returncode == 0 and any(
-            i in proc.stdout for i in [b"This host is registered", b"Registered"]
+            i in proc.stdout for i in ["This host is registered", "Registered"]
         ):
             return True
         proc.check_returncode()
 
-    def run(self, *args, check=True):
+    def run(self, *args, check=True, text=True):
         return logged_run(
             ["insights-client"] + list(args),
             check=check,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=text,
         )
 
     def register(self):

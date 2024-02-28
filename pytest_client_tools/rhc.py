@@ -21,15 +21,16 @@ class Rhc:
     @property
     def is_registered(self):
         proc = self.run("status", "--format", "json")
-        doc = json.loads(proc.stdout.decode())
+        doc = json.loads(proc.stdout)
         return doc["rhsm_connected"]
 
-    def run(self, *args, check=True):
+    def run(self, *args, check=True, text=True):
         return logged_run(
             ["rhc"] + list(args),
             check=check,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=text,
         )
 
     def connect(

@@ -27,12 +27,13 @@ class SubscriptionManager:
             return False
         proc.check_returncode()
 
-    def run(self, *args, check=True):
+    def run(self, *args, check=True, text=True):
         return logged_run(
             ["subscription-manager"] + list(args),
             check=check,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=text,
         )
 
     def config(self, **kwargs):
@@ -75,11 +76,13 @@ def stop_rhsmcertd():
         check=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        text=True,
     )
     pkill_proc = logged_run(
         ["pkill", "-e", "-x", "rhsmcertd"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        text=True,
     )
     if pkill_proc.returncode not in [0, 1]:
         pkill_proc.check_returncode()

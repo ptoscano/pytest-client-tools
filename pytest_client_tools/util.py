@@ -7,6 +7,7 @@ import logging
 import pathlib
 import shutil
 import subprocess
+import sys
 import tempfile
 
 from .logger import LOGGER
@@ -85,6 +86,11 @@ class NodeRunningData:
 def logged_run(*args, **kwargs):
     LOGGER.debug("running %s with options %s", list(*args), kwargs)
     check = kwargs.pop("check", False)
+    # switch "text" (if present) into "universal_newlines" for Python < 3.7
+    if sys.version_info[:2] < (3, 7):
+        text = kwargs.pop("text", None)
+        if text is not None:
+            kwargs["universal_newlines"] = text
     proc = subprocess.run(*args, **kwargs)
     LOGGER.debug("result: %s", proc)
     if check:
