@@ -30,6 +30,17 @@ class TestConfig:
                 must_exist=True,
                 when=Validator("candlepin.username", must_exist=True),
             ),
+            Validator("candlepin.activation_keys", cast=list, is_type_of=list),
+            Validator(
+                "candlepin.org",
+                must_exist=True,
+                when=Validator(
+                    "candlepin.activation_keys",
+                    cast=list,
+                    is_type_of=list,
+                    must_exist=True,
+                ),
+            ),
             Validator("insights.legacy_upload", cast=bool, is_type_of=bool),
         )
         self._settings.validators.validate()
@@ -41,8 +52,16 @@ class TestConfig:
                 self._settings.get("candlepin.host") is not None
                 and self._settings.get("candlepin.port") is not None
                 and self._settings.get("candlepin.prefix") is not None
-                and self._settings.get("candlepin.username") is not None
-                and self._settings.get("candlepin.password") is not None
+                and (
+                    (
+                        self._settings.get("candlepin.username") is not None
+                        and self._settings.get("candlepin.password") is not None
+                    )
+                    or (
+                        self._settings.get("candlepin.activation_keys") is not None
+                        and self._settings.get("candlepin.org") is not None
+                    )
+                )
             )
         except KeyError:
             return False
