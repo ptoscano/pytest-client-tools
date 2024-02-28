@@ -149,7 +149,7 @@ class InsightsClient:
     def is_registered(self):
         proc = self.run("--status", check=False)
         if proc.returncode in [0, 1] and any(
-            i in proc.stdout for i in ["NOT", "unregistered"]
+            i in proc.stdout for i in ["NOT", "unregistered", "401: Unauthorized"]
         ):
             return False
         if proc.returncode == 0 and any(
