@@ -62,7 +62,10 @@ class SubscriptionManager:
             args.append(org)
         if activationkey:
             args.append("--activationkey")
-            args.append(activationkey)
+            if isinstance(activationkey, list):
+                args.append(",".join(activationkey))
+            else:
+                args.append(activationkey)
 
         return self.run("register", *args, *extra_args)
 
