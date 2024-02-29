@@ -14,7 +14,7 @@ class TestConfig:
         )
         self._settings.validators.register(
             Validator("candlepin.host"),
-            Validator("candlepin.port", gt=0, lt=65536, is_type_of=int),
+            Validator("candlepin.port", is_type_of=int, gt=0, lt=65536),
             Validator("candlepin.prefix", startswith="/"),
             Validator("candlepin.insecure", is_type_of=bool),
             Validator("candlepin.username"),
