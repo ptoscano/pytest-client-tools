@@ -48,7 +48,13 @@ class SubscriptionManager:
         self.run("config", *args)
 
     def register(
-        self, username=None, password=None, org=None, activationkey=None, *extra_args
+        self,
+        username=None,
+        password=None,
+        org=None,
+        activationkey=None,
+        environments=None,
+        *extra_args,
     ):
         args = []
         if username:
@@ -66,6 +72,12 @@ class SubscriptionManager:
                 args.append(",".join(activationkey))
             else:
                 args.append(activationkey)
+        if environments:
+            args.append("--environment")
+            if isinstance(environments, list):
+                args.append(",".join(environments))
+            else:
+                args.append(environments)
 
         return self.run("register", *args, *extra_args)
 
