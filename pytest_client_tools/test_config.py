@@ -59,5 +59,9 @@ class TestConfig:
         except KeyError:
             return False
 
+    @property
+    def environment(self):
+        return self._settings.current_env
+
     def get(self, *path):
         return self._settings[".".join(path)]
