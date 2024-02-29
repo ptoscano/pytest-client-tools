@@ -33,6 +33,7 @@ class TestConfig:
                     must_exist=True,
                 ),
             ),
+            Validator("candlepin.environments", is_type_of=list),
             Validator("insights.legacy_upload", is_type_of=bool),
         )
         self._settings.validators.validate()
