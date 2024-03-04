@@ -4,5 +4,5 @@
 dataclasses;python_version<"3.7"
 dynaconf
 flake8
-pytest
+pytest>=4
 requests

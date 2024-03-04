@@ -29,7 +29,7 @@ setup(
     install_requires=[
         "dataclasses;python_version<'3.7'",
         "dynaconf",
-        "pytest>=2.7.0",
+        "pytest>=4",
         "requests",
     ],
     classifiers=[
