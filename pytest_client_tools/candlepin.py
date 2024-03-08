@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 import time
-import warnings
 
 import requests
+import urllib3
 
 from .util import Version
 
@@ -62,7 +62,7 @@ class Candlepin:
     def _request(self, req_type, path, **kwargs):
         actual_kwargs = self._request_kwargs
         actual_kwargs.update(kwargs)
-        warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         response = self._session.request(
             req_type, f"{self._base_path}/{path}", **actual_kwargs
         )
