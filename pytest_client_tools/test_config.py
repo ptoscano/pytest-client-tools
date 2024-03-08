@@ -5,6 +5,10 @@ from dynaconf import Dynaconf, Validator
 
 
 class TestConfig:
+    """
+    Configuration for the tests.
+    """
+
     def __init__(self):
         self._settings = Dynaconf(
             default_env="default",
@@ -40,6 +44,9 @@ class TestConfig:
 
     @property
     def is_external(self):
+        """
+        Determines whether an external Candlepin is configured.
+        """
         try:
             return (
                 self._settings.get("candlepin.host") is not None
@@ -61,7 +68,16 @@ class TestConfig:
 
     @property
     def environment(self):
+        """
+        Returns the Dynaconf environment currently in use.
+        """
         return self._settings.current_env
 
     def get(self, *path):
+        """
+        Query for a configuration key.
+
+        :param path: The path/name of the configuration key
+        :type path: str
+        """
         return self._settings[".".join(path)]

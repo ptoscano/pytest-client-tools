@@ -15,11 +15,23 @@ SUBMAN_FILES_TO_SAVE = (
 
 
 class SubscriptionManager:
+    """
+    Subscription Manager.
+
+    This class represents the `subscription-manager` tool.
+    """
+
     def __init__(self):
         pass
 
     @property
     def is_registered(self):
+        """
+        Query whether `subscription-manager` is registered.
+
+        :return: Whether `subscription-manager` is registered
+        :rtype: bool
+        """
         proc = self.run("identity", check=False)
         if proc.returncode == 0:
             return True
@@ -28,6 +40,16 @@ class SubscriptionManager:
         proc.check_returncode()
 
     def run(self, *args, check=True, text=True):
+        """
+        Run `subscription-manager` with the specified arguments.
+
+        This function is a simple wrapper around invoking
+        `subscription-manager` with a specified list of arguments, returning
+        the result of the execution directly from `subprocess`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return logged_run(
             ["subscription-manager"] + list(args),
             check=check,
@@ -56,6 +78,14 @@ class SubscriptionManager:
         environments=None,
         *extra_args,
     ):
+        """
+        Register with `subscription-manager`.
+
+        Invokes `subscription-manager register`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         args = []
         if username:
             args.append("--username")
@@ -82,6 +112,14 @@ class SubscriptionManager:
         return self.run("register", *args, *extra_args)
 
     def unregister(self):
+        """
+        Unregister with `subscription-manager`.
+
+        Invokes `subscription-manager unregister`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return self.run("unregister")
 
 

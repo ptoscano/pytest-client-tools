@@ -142,11 +142,23 @@ class InsightsClientConfig:
 
 
 class InsightsClient:
+    """
+    Insights Client.
+
+    This class represents the `insights-client` tool.
+    """
+
     def __init__(self):
         self.config = InsightsClientConfig()
 
     @property
     def is_registered(self):
+        """
+        Query whether `insights-client` is registered.
+
+        :return: Whether `insights-client` is registered
+        :rtype: bool
+        """
         proc = self.run("--status", check=False)
         if proc.returncode in [0, 1] and any(
             i in proc.stdout for i in ["NOT", "unregistered", "401: Unauthorized"]
@@ -159,6 +171,16 @@ class InsightsClient:
         proc.check_returncode()
 
     def run(self, *args, check=True, text=True):
+        """
+        Run `insights-client` with the specified arguments.
+
+        This function is a simple wrapper around invoking `insights-client`
+        with a specified list of arguments, returning the result of the
+        execution directly from `subprocess`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return logged_run(
             ["insights-client"] + list(args),
             check=check,
@@ -168,7 +190,23 @@ class InsightsClient:
         )
 
     def register(self):
+        """
+        Register with `insights-client`.
+
+        Invokes `insights-client --register`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return self.run("--register")
 
     def unregister(self):
+        """
+        Unregister with `insights-client`.
+
+        Invokes `insights-client --unregister`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return self.run("--unregister")

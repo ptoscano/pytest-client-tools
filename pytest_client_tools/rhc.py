@@ -15,16 +15,38 @@ RHC_FILES_TO_SAVE = (
 
 
 class Rhc:
+    """
+    Rhc.
+
+    This class represents the `rhc` tool.
+    """
+
     def __init__(self):
         pass
 
     @property
     def is_registered(self):
+        """
+        Query whether `rhc` is registered.
+
+        :return: Whether `rhc` is registered
+        :rtype: bool
+        """
         proc = self.run("status", "--format", "json")
         doc = json.loads(proc.stdout)
         return doc["rhsm_connected"]
 
     def run(self, *args, check=True, text=True):
+        """
+        Run `rhc` with the specified arguments.
+
+        This function is a simple wrapper around invoking `rhc` with a
+        specified list of arguments, returning the result of the execution
+        directly from `rhc`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return logged_run(
             ["rhc"] + list(args),
             check=check,
@@ -36,6 +58,14 @@ class Rhc:
     def connect(
         self, username=None, password=None, org=None, activationkey=None, *extra_args
     ):
+        """
+        Connect with `rhc`.
+
+        Invokes `rhc connect`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         args = []
         if username:
             args.append("--username")
@@ -56,4 +86,12 @@ class Rhc:
         return proc
 
     def disconnect(self):
+        """
+        Disconnect with `rhc`.
+
+        Invokes `rhc disconnect`.
+
+        :return: The result of the command execution
+        :rtype: `subprocess.CompletedProcess`
+        """
         return self.run("disconnect")

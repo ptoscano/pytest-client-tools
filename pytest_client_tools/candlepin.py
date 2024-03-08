@@ -10,6 +10,12 @@ from .util import Version
 
 
 class Candlepin:
+    """
+    Candlepin
+
+    This class represents a Candlepin server.
+    """
+
     def __init__(self, host, port, prefix, insecure):
         self._running = False
         self._host = host
@@ -27,18 +33,30 @@ class Candlepin:
 
     @property
     def host(self):
+        """
+        The hostname of the Candlepin server.
+        """
         return self._host
 
     @property
     def port(self):
+        """
+        The port of the Candlepin server.
+        """
         return self._port
 
     @property
     def prefix(self):
+        """
+        The prefix of the Candlepin server.
+        """
         return self._prefix
 
     @property
     def insecure(self):
+        """
+        Whether verify the SSL connection to the Candlepin server.
+        """
         return self._insecure
 
     def _request(self, req_type, path, **kwargs):
@@ -52,12 +70,27 @@ class Candlepin:
         return response
 
     def get(self, path, **kwargs):
+        """
+        Perform a GET REST call.
+        """
         return self._request("GET", path)
 
     def status(self):
+        """
+        Get the status of the Candlepin server.
+
+        This is a shortcut for querying the `/status` endpoint, returning its
+        output as JSON.
+
+        :returns: The JSON dictionary of Candlepin's `/status` endpoint
+        :rtype: dict
+        """
         return self.get("status").json()
 
     def version(self):
+        """
+        Get the version string of the Candlepin server.
+        """
         return Version(self.status()["version"])
 
 
