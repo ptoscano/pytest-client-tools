@@ -16,6 +16,10 @@ repo_url: https://github.com/ptoscano/pytest-client-tools
 
 nav:
   - Home: index.md
+  - Configuration: config.md
+  - "API Reference":
+    - Classes: api.md
+    - Fixtures: fixtures.md
 
 markdown_extensions:
   - toc:
