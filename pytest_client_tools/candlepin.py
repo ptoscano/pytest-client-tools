@@ -56,7 +56,7 @@ class Candlepin:
         """
         Perform a GET REST call.
         """
-        return self._rest_client.get(path)
+        return self._rest_client.get(path, **kwargs)
 
     def status(self):
         """
