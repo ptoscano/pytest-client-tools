@@ -3,9 +3,7 @@
 
 import time
 
-import requests
-import urllib3
-
+from .restclient import RestClient
 from .util import Version
 
 
@@ -21,14 +19,10 @@ class Candlepin:
         self._port = port
         self._prefix = prefix
         self._insecure = insecure
-        self._base_path = f"https://{self._host}:{self._port}{self._prefix}"
-        self._session = requests.Session()
-        self._request_kwargs = {
-            "headers": {
-                "Content-type": "application/json",
-            },
-            "verify": False,
-        }
+        self._rest_client = RestClient(
+            base_url=f"https://{self._host}:{self._port}{self._prefix}",
+            verify=False,
+        )
 
     @property
     def host(self):
@@ -58,21 +52,11 @@ class Candlepin:
         """
         return self._insecure
 
-    def _request(self, req_type, path, **kwargs):
-        actual_kwargs = self._request_kwargs
-        actual_kwargs.update(kwargs)
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        response = self._session.request(
-            req_type, f"{self._base_path}/{path}", **actual_kwargs
-        )
-        response.raise_for_status()
-        return response
-
     def get(self, path, **kwargs):
         """
         Perform a GET REST call.
         """
-        return self._request("GET", path)
+        return self._rest_client.get(path)
 
     def status(self):
         """
