@@ -17,7 +17,6 @@ class Candlepin:
     """
 
     def __init__(self, host, port, prefix, insecure):
-        self._running = False
         self._host = host
         self._port = port
         self._prefix = prefix
