@@ -4,9 +4,10 @@
 import configparser
 import contextlib
 import pathlib
+import re
 import subprocess
 
-from .util import SavedFile, logged_run
+from .util import SavedFile, Version, logged_run
 
 
 INSIGHTS_CLIENT_FILES_TO_SAVE = (
@@ -169,6 +170,13 @@ class InsightsClient:
         ):
             return True
         proc.check_returncode()
+
+    @property
+    def core_version(self):
+        proc = self.run("--version")
+        m = re.search(r"^Core: (.+)-\d+$", proc.stdout, re.MULTILINE)
+        assert m
+        return Version(m.group(1))
 
     def run(self, *args, check=True, text=True):
         """
