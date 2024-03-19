@@ -84,7 +84,7 @@ class NodeRunningData:
 
 
 def logged_run(*args, **kwargs):
-    LOGGER.debug("running %s with options %s", list(*args), kwargs)
+    LOGGER.debug("running %s with options %s", args, kwargs)
     check = kwargs.pop("check", False)
     # switch "text" (if present) into "universal_newlines" for Python < 3.7
     if sys.version_info[:2] < (3, 7):
