@@ -42,6 +42,8 @@ class InsightsClientConfig:
 
     - setting an attribute for a known configuration key sets the corresponding
       configuration value
+    - setting an attribute for an unknown configuration key only sets a new
+      instance variable, without changing the actual configuration
     - getting an attribute for a known configuration key sets returns the
       configuration value if set, otherwise `KeyError` is raisen
 
@@ -210,7 +212,7 @@ class InsightsClient:
         [`Version`][pytest_client_tools.util.Version] object.
 
         :return: The version of the insights-core in use.
-        :rtype: `pytest_client_tools.util.Version`
+        :rtype: pytest_client_tools.util.Version
         """
         proc = self.run("--version")
         m = re.search(r"^Core: (.+)-\d+$", proc.stdout, re.MULTILINE)
@@ -225,8 +227,16 @@ class InsightsClient:
         with a specified list of arguments, returning the result of the
         execution directly from `subprocess`.
 
+        :param args: The actual arguments to run using `insights-client`
+        :type args: list
+        :param check: Whether raise an exception if the process exits with
+            a return code different than 0
+        :type check: bool
+        :param text: Whether the stdin/stdout of the process are textual
+            (and not bytes)
+        :type text: bool
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         return logged_run(
             ["insights-client"] + list(args),
@@ -243,7 +253,7 @@ class InsightsClient:
         Invokes `insights-client --register`.
 
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         return self.run("--register")
 
@@ -254,6 +264,6 @@ class InsightsClient:
         Invokes `insights-client --unregister`.
 
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         return self.run("--unregister")

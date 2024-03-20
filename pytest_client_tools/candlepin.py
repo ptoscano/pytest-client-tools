@@ -72,7 +72,11 @@ class Candlepin:
 
     def version(self):
         """
-        Get the version string of the Candlepin server.
+        Get the version string of the Candlepin server as
+        [`Version`][pytest_client_tools.util.Version] object.
+
+        :return: The version of Candlepin
+        :rtype: pytest_client_tools.util.Version
         """
         return Version(self.status()["version"])
 

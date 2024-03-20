@@ -47,8 +47,16 @@ class SubscriptionManager:
         `subscription-manager` with a specified list of arguments, returning
         the result of the execution directly from `subprocess`.
 
+        :param args: The actual arguments to run using `subscription-manager`
+        :type args: list
+        :param check: Whether raise an exception if the process exits with
+            a return code different than 0
+        :type check: bool
+        :param text: Whether the stdin/stdout of the process are textual
+            (and not bytes)
+        :type text: bool
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         return logged_run(
             ["subscription-manager"] + list(args),
@@ -83,8 +91,25 @@ class SubscriptionManager:
 
         Invokes `subscription-manager register`.
 
+        :param username: The username to use for registering
+        :type username: str, optional
+        :param password: The password to use for registering
+        :type password: str, optional
+        :param org: The organization to use for registering
+        :type org: str, optional
+        :param activationkey: The activation keys to use for registering;
+            this can be either a list of keys, or a single string with keys
+            separated by comma
+        :type activationkey: str or list, optional
+        :param environments: The environments to use for registering;
+            this can be either a list of environments, or a single string with
+            environments separated by comma
+        :type environments: str or list, optional
+        :param extra_args: Additional parameters to run, passed straight to
+            `subscription-manager register`
+        :type extra_args: list, optional
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         args = []
         if username:
@@ -118,7 +143,7 @@ class SubscriptionManager:
         Invokes `subscription-manager unregister`.
 
         :return: The result of the command execution
-        :rtype: `subprocess.CompletedProcess`
+        :rtype: subprocess.CompletedProcess
         """
         return self.run("unregister")
 
