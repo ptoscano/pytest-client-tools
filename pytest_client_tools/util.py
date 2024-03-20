@@ -21,7 +21,35 @@ class SavedFile:
 
 @functools.total_ordering
 class Version:
+    """
+    Version.
+
+    A simple representation of a version number/string in the format `X`,
+    or `X.Y`, or `X.Y.Z`, or in general a sequence of dot-spearated numbers.
+    Pre-release markers such as "alpha/beta/etc" are not supported.
+    """
+
     def __init__(self, *args):
+        """
+        Create a new Version object.
+
+        The passed arguments can either of:
+
+        - a single string which is parsed
+        - integer arguments representing the component of the version number
+
+        Examples:
+        ```python
+        >>> Version("1.2")
+        Version(1.2)
+        >>> Version(1, 3)
+        Version(1.3)
+        >>> Version(1, 3) == Version("1.2")
+        False
+        >>> Version(1, 3, 1) >= Version("1.3")
+        True
+        ```
+        """
         if len(args) == 1 and isinstance(args[0], str):
             parts = args[0].split(".")
             self._bits = [int(p) for p in parts]

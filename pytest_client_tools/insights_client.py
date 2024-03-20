@@ -32,6 +32,23 @@ INSIGHTS_CLIENT_FILES_TO_SAVE = (
 
 
 class InsightsClientConfig:
+    """
+    Insights Client configuration.
+
+    This class represents the configuration of `insights-client`, i.e.
+    `/etc/insights-client/insights-client.conf` by default.
+
+    This class uses attributes to represents the various configuration bits:
+
+    - setting an attribute for a known configuration key sets the corresponding
+      configuration value
+    - getting an attribute for a known configuration key sets returns the
+      configuration value if set, otherwise `KeyError` is raisen
+
+    Please note that changing attributes does not automatically update the
+    configuration file; `save()` must be called explicitly when needed.
+    """
+
     # boolean config keys
     _KEYS_BOOL = {
         "analyze_container",
@@ -107,6 +124,12 @@ class InsightsClientConfig:
         self.reload()
 
     def reload(self):
+        """
+        Reload the configuration.
+
+        Reload the configuration from the underlying file, discarding all the
+        values set in the instance.
+        """
         with open(self._path) as f:
             self._config = configparser.ConfigParser()
             self._config.read_file(f, source=self._path)
@@ -114,6 +137,11 @@ class InsightsClientConfig:
                 self._config.add_section("insights-client")
 
     def save(self):
+        """
+        Save the configuration.
+
+        Save the configuration values to the underlying configuration file.
+        """
         with open(self._path, "w") as f:
             self._config.write(f, space_around_delimiters=False)
 
@@ -147,6 +175,10 @@ class InsightsClient:
     Insights Client.
 
     This class represents the `insights-client` tool.
+
+    It exposes a public `config` attribute (which is `InsightsClientConfig`)
+    representing the configuration of `insights-client`, i.e.
+    `/etc/insights-client/insights-client.conf`.
     """
 
     def __init__(self):
@@ -173,6 +205,13 @@ class InsightsClient:
 
     @property
     def core_version(self):
+        """
+        Return the version of insights-core as
+        [`Version`][pytest_client_tools.util.Version] object.
+
+        :return: The version of the insights-core in use.
+        :rtype: `pytest_client_tools.util.Version`
+        """
         proc = self.run("--version")
         m = re.search(r"^Core: (.+)-\d+$", proc.stdout, re.MULTILINE)
         assert m
