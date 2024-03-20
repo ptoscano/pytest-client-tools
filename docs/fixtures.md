@@ -23,11 +23,16 @@ to that test.
 This fixture signals that the test requires the Candlepin server, and in
 particular an external Candlepin server whose details are in the configuration.
 
-Since this fixture requires details of a Candlepin server set up in the
-configuration, if a server is not fully configured (any of the `candlepin.host`,
-`candlepin.port`, `candlepin.prefix`, `candlepin.username`, and
-`candlepin.password` keys is missing) then this fixture will skip the test
-automatically.
+This fixture requires details of a Candlepin server set up in the configuration,
+and if a server is not fully configured then this fixture will skip the test
+automatically. The configuration keys that are needed for this are:
+
+- `candlepin.host`,
+- `candlepin.port`
+- `candlepin.prefix`
+- either of:
+    - `candlepin.username` and `candlepin.password`
+    - `candlepin.activation_keys` and `candlepin.org`
 
 The type of the fixture is the [`Candlepin`][pytest_client_tools.candlepin.Candlepin]
 class.
@@ -78,7 +83,18 @@ class.
 
 This fixture has a "function" scope.
 
-This fixture cannot be used together with the `subman_session` fixture.
+In case the `subman_session` fixture is used when this fixture is used, then
+its behaviour changes:
+
+- there is no more automatic configuration of the `SubscriptionManager` object,
+  as the object provided by `subman_session` will have already done its own
+  configuration
+- the system is no more unregistered at the end of the scope of this fixture
+
+which means that thix fixture is still usable to interact with
+`subscription-manager`; in this case, there should be care about not
+unregistering during a test, otherwise it breaks the assumptions that tests
+have when using the `subman_session` fixture.
 
 The usage of this fixture to a test automatically adds a `subman` marker
 to that test.
@@ -89,7 +105,8 @@ This fixture is equivalent to the `subman` fixture, and the only difference is
 the "session" scope; because of this, the unregistration of the system happens
 at the end of the test session.
 
-This fixture cannot be used together with the `subman` fixture.
+When used, this modifies how the `subman` fixture behaves; please check the
+documentation of that fixture for more details.
 
 ### `insights_client`
 

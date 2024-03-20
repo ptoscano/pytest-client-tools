@@ -28,6 +28,9 @@ candlepin.prefix = "/candlepin-prefix"
 candlepin.insecure = false
 candlepin.username = "candlepin-username"
 candlepin.password = "candlepin-password"
+candlepin.activation_keys = ["activation-key-1", "activation-key-2"]
+candlepin.org = "candlepin-organization"
+candlepin.environments = ["environment-1", "environment-2"]
 insights.legacy_upload = false
 ```
 
@@ -59,6 +62,19 @@ explanation of each key, with the type of its value:
 - `candlepin.password` (string)
 
     The password to use for registration to the external Candlepin server.
+
+- `candlepin.activation_keys` (list of strings)
+
+    The activation keys to use for registration to the external Candlepin
+    server.
+
+- `candlepin.org` (string)
+
+    The organization to use for registration to the external Candlepin server.
+
+- `candlepin.environments` (list of strings)
+
+    The environments to use for registration to the external Candlepin server.
 
 - `insights.legacy_upload` (boolean)
 

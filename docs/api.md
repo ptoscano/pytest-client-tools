@@ -12,6 +12,10 @@
 
 ::: pytest_client_tools.insights_client.InsightsClient
 
+## `InsightsClientConfig`
+
+::: pytest_client_tools.insights_client.InsightsClientConfig
+
 ## `Rhc`
 
 ::: pytest_client_tools.rhc.Rhc
@@ -19,3 +23,7 @@
 ## `TestConfig`
 
 ::: pytest_client_tools.test_config.TestConfig
+
+## `Version`
+
+::: pytest_client_tools.util.Version
