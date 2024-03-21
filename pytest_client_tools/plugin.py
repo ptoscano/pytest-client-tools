@@ -7,13 +7,15 @@ import locale
 import logging
 import shutil
 import subprocess
-
 import pytest
+
 
 from .candlepin import Candlepin, ping_candlepin
 from .insights_client import InsightsClient, INSIGHTS_CLIENT_FILES_TO_SAVE
 from .logger import LOGGER
 from .podman import Podman
+
+
 from .subscription_manager import (
     SubscriptionManager,
     SUBMAN_FILES_TO_SAVE,
@@ -22,7 +24,7 @@ from .subscription_manager import (
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
 from .util import NodeRunningData
-
+from .config import _settings
 
 _MARKERS = {
     "candlepin": "tests requiring a self-deployed Candlepin",
@@ -266,6 +268,11 @@ def pytest_configure(config):
     for mark, description in _MARKERS.items():
         config.addinivalue_line("markers", f"{mark}: {description}")
     config.addinivalue_line("markers", "jira(id): test for jira cards")
+    config.addinivalue_line(
+        "markers",
+        "env(name): required Dynaconf environment for a test",
+    )
+
     locale.setlocale(locale.LC_ALL, "C.UTF-8")
 
 
@@ -288,3 +295,12 @@ def pytest_runtest_logfinish(nodeid, location):
     if node_running_data.logfile.exists():
         node_running_data.artifacts.copy(node_running_data.logfile)
     logging.getLogger().handlers.remove(node_running_data.handler)
+
+
+def pytest_runtest_setup(item):
+    envnames = [mark.args[0] for mark in item.iter_markers(name="env")]
+    the_environment = _settings.get("env_for_dynaconf") or "development"
+    if envnames and the_environment not in envnames:
+        pytest.skip(
+            f"test requires a Dynaconf environment to be one of those: {envnames}",
+        )
