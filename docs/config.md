@@ -32,6 +32,7 @@ candlepin.activation_keys = ["activation-key-1", "activation-key-2"]
 candlepin.org = "candlepin-organization"
 candlepin.environments = ["environment-1", "environment-2"]
 insights.legacy_upload = false
+insights.auto_update = true
 ```
 
 The various keys are grouped depending on their area; here follows the
@@ -79,6 +80,13 @@ explanation of each key, with the type of its value:
 - `insights.legacy_upload` (boolean)
 
     Whether to set the `legacy_upload` configuration option for
+    `insights-client` by default when a new instance of the `insights_client`
+    fixture is returned. If not set, the value previous set in
+    `insights-client.conf` is not changed.
+
+- `insights.auto_update` (boolean)
+
+    Whether to set the `auto_update` configuration option for
     `insights-client` by default when a new instance of the `insights_client`
     fixture is returned. If not set, the value previous set in
     `insights-client.conf` is not changed.

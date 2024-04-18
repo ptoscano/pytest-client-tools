@@ -39,6 +39,7 @@ class TestConfig:
             ),
             Validator("candlepin.environments", is_type_of=list),
             Validator("insights.legacy_upload", is_type_of=bool),
+            Validator("insights.auto_update", is_type_of=bool),
         )
         self._settings.validators.validate()
 

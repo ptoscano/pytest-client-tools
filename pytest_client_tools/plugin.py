@@ -200,6 +200,11 @@ def insights_client(save_insights_client_files, test_config):
         if legacy_upload is not None:
             insights_client.config.legacy_upload = legacy_upload
         save_config = True
+    with contextlib.suppress(KeyError):
+        auto_update = test_config.get("insights.auto_update")
+        if auto_update is not None:
+            insights_client.config.auto_update = auto_update
+        save_config = True
     if save_config:
         insights_client.config.save()
     try:
