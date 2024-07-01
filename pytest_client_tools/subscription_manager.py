@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 import pathlib
+import re
 import subprocess
+import uuid
 
 from .util import SavedFile, logged_run
 
@@ -12,6 +14,15 @@ SUBMAN_FILES_TO_SAVE = (
     SavedFile(pathlib.Path("/var/log/rhsm/rhsm.log"), remove_at_start=True),
     SavedFile(pathlib.Path("/var/log/rhsm/rhsmcertd.log"), remove_at_start=True),
 )
+
+
+class SystemNotRegisteredError(RuntimeError):
+    """
+    The system is not registered.
+    """
+
+    def __init__(self):
+        pass
 
 
 class SubscriptionManager:
@@ -37,6 +48,28 @@ class SubscriptionManager:
             return True
         if proc.returncode == 1:
             return False
+        proc.check_returncode()
+
+    @property
+    def uuid(self):
+        """
+        Return the UUID of the registered system.
+
+        Raises `SystemNotRegisteredError` if the system is not registered.
+
+        :return: The UUID of the system
+        :rtype: uuid.UUID
+        """
+        proc = self.run("identity", check=False)
+        if proc.returncode == 0:
+            m = re.search(
+                r"^system identity: ([-0-9A-Fa-f]{36})$",
+                proc.stdout,
+                flags=re.MULTILINE,
+            )
+            return uuid.UUID(m.group(1))
+        if proc.returncode == 1:
+            raise SystemNotRegisteredError()
         proc.check_returncode()
 
     def run(self, *args, check=True, text=True):
