@@ -6,7 +6,9 @@ import contextlib
 import pathlib
 import re
 import subprocess
+import uuid
 
+from . import SystemNotRegisteredError
 from .util import SavedFile, Version, logged_run
 
 
@@ -234,6 +236,21 @@ class InsightsClient:
         m = re.search(r"^Core: (.+)-\d+$", proc.stdout, re.MULTILINE)
         assert m
         return Version(m.group(1))
+
+    @property
+    def uuid(self):
+        """
+        Return the UUID of the registered system.
+
+        Raises `SystemNotRegisteredError` if the system is not registered.
+
+        :return: The UUID of the system
+        :rtype: uuid.UUID
+        """
+        if not self.is_registered:
+            raise SystemNotRegisteredError()
+        with open("/etc/insights-client/machine-id", "r") as f:
+            return uuid.UUID(f.read().strip())
 
     def run(self, *args, check=True, text=True):
         """
