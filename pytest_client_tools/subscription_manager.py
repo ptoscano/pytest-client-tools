@@ -6,6 +6,7 @@ import re
 import subprocess
 import uuid
 
+from . import SystemNotRegisteredError
 from .util import SavedFile, logged_run
 
 
@@ -14,15 +15,6 @@ SUBMAN_FILES_TO_SAVE = (
     SavedFile(pathlib.Path("/var/log/rhsm/rhsm.log"), remove_at_start=True),
     SavedFile(pathlib.Path("/var/log/rhsm/rhsmcertd.log"), remove_at_start=True),
 )
-
-
-class SystemNotRegisteredError(RuntimeError):
-    """
-    The system is not registered.
-    """
-
-    def __init__(self):
-        pass
 
 
 class SubscriptionManager:

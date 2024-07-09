@@ -1,5 +1,11 @@
 # SPDX-FileCopyrightText: Red Hat
 # SPDX-License-Identifier: MIT
 
-# import SystemNotRegisteredError to export it as plugin API
-from .subscription_manager import SystemNotRegisteredError  # noqa: F401
+
+class SystemNotRegisteredError(RuntimeError):
+    """
+    The system is not registered.
+    """
+
+    def __init__(self):
+        pass
