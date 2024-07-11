@@ -58,6 +58,12 @@ class Candlepin:
         """
         return self._rest_client.get(path, **kwargs)
 
+    def post(self, path, data, **kwargs):
+        """
+        Perform a POST REST call.
+        """
+        return self._rest_client.post(path, data, **kwargs)
+
     def status(self):
         """
         Get the status of the Candlepin server.

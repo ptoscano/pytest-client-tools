@@ -57,3 +57,9 @@ class RestClient:
         Perform a GET REST call.
         """
         return self._request("GET", path, **kwargs)
+
+    def post(self, path, data, **kwargs):
+        """
+        Perform a POST REST call.
+        """
+        return self._request("POST", path, json=data, **kwargs)
