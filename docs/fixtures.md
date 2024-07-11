@@ -135,3 +135,20 @@ This fixture provides the configuration used for the tests.
 The type of the fixture is the
 [`TestConfig`][pytest_client_tools.test_config.TestConfig] class.
 
+### `external_inventory`
+
+This fixture signals that the test needs to connect to the Insights Inventory
+server according to the details (e.g. the `insights.base_url` key) in the
+configuration.
+
+The type of the fixture is the [`Inventory`][pytest_client_tools.inventory.Inventory]
+class.
+
+This fixture has a "session" scope.
+
+Since the Inventory service is what `insights-client` uses, this fixture may be
+used only when the `external_candlepin` fixture is used. Also, certain methods
+of the fixture (e.g. `this_system()`) require the `insights_client` fixture.
+
+The usage of this fixture to a test automatically adds a `external_inventory`
+marker to that test.

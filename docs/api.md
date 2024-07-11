@@ -24,6 +24,10 @@
 
 ::: pytest_client_tools.test_config.TestConfig
 
+## `Inventory`
+
+::: pytest_client_tools.inventory.Inventory
+
 ## `Version`
 
 ::: pytest_client_tools.util.Version

@@ -11,6 +11,7 @@ import subprocess
 import pytest
 
 from .candlepin import Candlepin, ping_candlepin
+from .inventory import Inventory
 from .insights_client import InsightsClient, INSIGHTS_CLIENT_FILES_TO_SAVE
 from .logger import LOGGER
 from .podman import Podman
@@ -31,6 +32,7 @@ _MARKERS = {
     "subman": "tests for subscription-manager",
     "insights_client": "tests for insights-client",
     "rhc": "tests for rhc",
+    "external_inventory": "tests requiring an external Inventory service",
 }
 _CANDLEPIN_FIXTURES = {x for x in _MARKERS.keys() if "candlepin" in x}
 
@@ -228,6 +230,26 @@ def rhc(save_rhc_files, test_config):
     finally:
         with contextlib.suppress(subprocess.SubprocessError):
             rhc.disconnect()
+
+
+@pytest.fixture(scope="session")
+def external_inventory(request, test_config):
+    external_candlepin = request.getfixturevalue("external_candlepin")
+    if not external_candlepin:
+        pytest.skip("missing 'external_candlepin' fixture")
+    # get the CA path: if it is non-empty, then it means that
+    # the specified path enforces the SSL validation
+    verify = test_config.get("insights", "ca_path")
+    if not verify:
+        # empty/unset CA path: get whether verify the SSL connection
+        # using the system CA store
+        verify = not test_config.get("insights", "insecure")
+    inventory = Inventory(
+        base_url=test_config.get("insights", "base_url") + "/inventory/v1",
+        verify=verify,
+        request=request,
+    )
+    yield inventory
 
 
 def pytest_addoption(parser):
