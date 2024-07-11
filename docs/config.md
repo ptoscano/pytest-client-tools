@@ -91,5 +91,21 @@ explanation of each key, with the type of its value:
     fixture is returned. If not set, the value previous set in
     `insights-client.conf` is not changed.
 
+- `insights.base_url` (string)
+
+    The base URL to use for REST API calls to the various Insights services.
+
+- `insights.ca_path` (boolean)
+
+    The default CA path/file to use for verifying the SSL connections to the
+    Insights services. To be able to use the system CA store, this setting must
+    be set to an empty string. Please note that this key is effectively used
+    only if `insights.insecure` is `true`.
+
+- `insights.insecure` (boolean)
+
+    This specifies whether to disable the validation of the SSL certificate
+    of the Insights services.
+
 [dynaconf]: https://www.dynaconf.com/ "Dynaconf"
 [toml]: https://toml.io/ "TOML"

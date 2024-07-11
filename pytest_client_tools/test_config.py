@@ -40,6 +40,15 @@ class TestConfig:
             Validator("candlepin.environments", is_type_of=list),
             Validator("insights.legacy_upload", is_type_of=bool),
             Validator("insights.auto_update", is_type_of=bool),
+            Validator(
+                "insights.base_url",
+                default="https://cert-api.access.redhat.com/r/insights/platform",
+            ),
+            Validator(
+                "insights.ca_path",
+                default="/etc/insights-client/cert-api.access.redhat.com.pem",
+            ),
+            Validator("insights.insecure", is_type_of=bool, default=False),
         )
         self._settings.validators.validate()
 
