@@ -4,6 +4,8 @@
 import requests
 import urllib3
 
+from .logger import LOGGER
+
 
 class RestClient:
     """
@@ -37,9 +39,16 @@ class RestClient:
         actual_kwargs.update(kwargs)
         if not self._verify:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        LOGGER.debug(
+            "requesting %s for %s with args=%s",
+            req_type,
+            f"{self._base_url}/{path}",
+            actual_kwargs,
+        )
         response = self._session.request(
             req_type, f"{self._base_url}/{path}", **actual_kwargs
         )
+        LOGGER.debug("result: %s, %s", response, response.text)
         response.raise_for_status()
         return response
 
