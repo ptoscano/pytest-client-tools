@@ -1,7 +1,29 @@
 # SPDX-FileCopyrightText: Red Hat
 # SPDX-License-Identifier: MIT
 
+import contextlib
+import functools
 import subprocess
+
+
+class ContainerNotRunningError(RuntimeError):
+    """
+    The container is not running.
+    """
+
+    def __init__(self):
+        pass
+
+
+def requires_running(func):
+    @functools.wraps(func)
+    def function_wrapper(self, *args, **kwargs):
+        running_id = getattr(self, "_running_id")
+        if not running_id:
+            raise ContainerNotRunningError
+        return func(self, *args, **kwargs)
+
+    return function_wrapper
 
 
 class Podman:
@@ -27,7 +49,8 @@ class Podman:
         return self
 
     def __exit__(self, error_type, error_value, traceback):
-        self.stop()
+        with contextlib.suppress(ContainerNotRunningError):
+            self.stop()
         if error_type:
             raise
 
@@ -58,10 +81,8 @@ class Podman:
         )
         self._running_id = proc.stdout.rstrip().decode()
 
+    @requires_running
     def stop(self):
-        if not self._running_id:
-            return
-
         subprocess.run(
             ["podman", "stop", self._running_id],
             check=True,
