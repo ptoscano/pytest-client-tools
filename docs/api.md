@@ -28,6 +28,10 @@
 
 ::: pytest_client_tools.inventory.Inventory
 
+## `SystemNotRegisteredError`
+
+::: pytest_client_tools.SystemNotRegisteredError
+
 ## `Version`
 
 ::: pytest_client_tools.util.Version
