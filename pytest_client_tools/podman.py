@@ -40,6 +40,15 @@ class Podman:
         self._hostname = hostname
         self._port_mappings = port_mappings
 
+    def _replace_container_name(self, path):
+        if path.startswith("$C:"):
+            return self._running_id + path[2:]
+        elif path.startswith(f"{self._running_id}:"):
+            return path
+        elif ":" in path:
+            raise ValueError("referring to a different podman container")
+        return path
+
     @property
     def running_id(self):
         return self._running_id
@@ -90,3 +99,21 @@ class Podman:
             stderr=subprocess.PIPE,
         )
         self._running_id = None
+
+    @requires_running
+    def cp(self, src, dest):
+        actual_src = self._replace_container_name(src)
+        actual_dest = self._replace_container_name(dest)
+
+        args = [
+            "podman",
+            "cp",
+            actual_src,
+            actual_dest,
+        ]
+        subprocess.run(
+            args,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
