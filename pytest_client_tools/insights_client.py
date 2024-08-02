@@ -238,6 +238,20 @@ class InsightsClient:
         return Version(m.group(1))
 
     @property
+    def version(self):
+        """
+        Return the version of insights-client as
+        [`Version`][pytest_client_tools.util.Version] object.
+
+        :return: The version of the insights-client in use.
+        :rtype: pytest_client_tools.util.Version
+        """
+        proc = self.run("--version")
+        m = re.search(r"^Client: (.+)$", proc.stdout, re.MULTILINE)
+        assert m
+        return Version(m.group(1))
+
+    @property
     def uuid(self):
         """
         Return the UUID of the registered system.
