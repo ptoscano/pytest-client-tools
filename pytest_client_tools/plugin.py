@@ -7,6 +7,7 @@ import locale
 import logging
 import shutil
 import subprocess
+import tempfile
 
 import pytest
 
@@ -91,15 +92,20 @@ def candlepin(request):
             "--candlepin-container-is-running"
         )
         initial_wait = 0
+        verify = False
         if start_container:
-            stack.enter_context(_create_candlepin_container())
+            container = stack.enter_context(_create_candlepin_container())
             # candlepin takes a while to start
             initial_wait = 5
+            temp_cert = stack.enter_context(tempfile.NamedTemporaryFile())
+            container.cp("$C:/etc/candlepin/certs/candlepin-ca.crt", temp_cert.name)
+            verify = temp_cert.name
         candlepin = Candlepin(
             host="localhost",
             port=8443,
             prefix="/candlepin",
             insecure=True,
+            verify=verify,
         )
         ping_candlepin(candlepin, initial_wait=initial_wait)
         yield candlepin
