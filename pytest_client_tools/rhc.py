@@ -3,9 +3,10 @@
 
 import json
 import pathlib
+import re
 import subprocess
 
-from .util import SavedFile, logged_run
+from .util import SavedFile, logged_run, Version
 
 
 RHC_FILES_TO_SAVE = (
@@ -35,6 +36,20 @@ class Rhc:
         proc = self.run("status", "--format", "json")
         doc = json.loads(proc.stdout)
         return doc["rhsm_connected"]
+
+    @property
+    def version(self):
+        """
+        Return the version of rhc as
+        [`Version`][pytest_client_tools.util.Version] object.
+
+        :return: The version of the rhc in use.
+        :rtype: pytest_client_tools.util.Version
+        """
+        proc = self.run("--version")
+        m = re.search(r"^rhc version (.+)$", proc.stdout, re.MULTILINE)
+        assert m
+        return Version(m.group(1))
 
     def run(self, *args, check=True, text=True):
         """
