@@ -247,9 +247,19 @@ def external_inventory(request, test_config):
     inventory = Inventory(
         base_url=test_config.get("insights", "base_url") + "/inventory/v1",
         verify=verify,
-        request=request,
     )
     yield inventory
+
+
+@pytest.fixture
+def _init_inventory_from_insights_client(request):
+    insights_client = request.getfixturevalue("insights_client")
+    assert insights_client
+    external_inventory = request.getfixturevalue("external_inventory")
+    assert external_inventory
+    external_inventory._insights_client = insights_client
+    yield
+    external_inventory._insights_client = None
 
 
 def pytest_addoption(parser):
@@ -278,6 +288,11 @@ def pytest_collection_modifyitems(config, items):
                 item.fixturenames.append("subman")
             if "insights_client" not in item.fixturenames:
                 item.fixturenames.append("insights_client")
+        if (
+            "insights_client" in item.fixturenames
+            and "external_inventory" in item.fixturenames
+        ):
+            item.fixturenames.append("_init_inventory_from_insights_client")
         for jira_marker in item.iter_markers(name="jira"):
             for jira in jira_marker.args:
                 jira_item = jira.lower()

@@ -11,7 +11,7 @@ class Inventory:
     This class represents an Inventory server.
     """
 
-    def __init__(self, base_url, verify=True, request=None):
+    def __init__(self, base_url, verify=True):
         self._rest_client = RestClient(
             base_url=base_url,
             verify=verify,
@@ -20,7 +20,7 @@ class Inventory:
                 "/etc/pki/consumer/key.pem",
             ),
         )
-        self._request = request
+        self._insights_client = None
 
     @property
     def base_url(self):
@@ -46,16 +46,15 @@ class Inventory:
         :return: The dict of the current system in Inventory
         :rtype: dict
         """
-        if not self._request:
+        if not self._insights_client:
             raise RuntimeError(
-                "Inventory.this_system(): cannot invoke without a pytest request set"
+                "Inventory.this_system(): cannot invoke without insights_client"
             )
-        insights_client = self._request.getfixturevalue("insights_client")
-        path = f"hosts?insights_id={insights_client.uuid}"
+        path = f"hosts?insights_id={self._insights_client.uuid}"
         res_json = self.get(path).json()
         if res_json["total"] != 1:
             raise RuntimeError(
                 f"Inventory.this_system(): {res_json['total']} hosts returned "
-                f"for the current UUID ({insights_client.uuid})"
+                f"for the current UUID ({self._insights_client.uuid})"
             )
         return res_json["results"][0]
