@@ -151,7 +151,7 @@ class InsightsClientConfig:
         values set in the instance.
         """
         with open(self._path) as f:
-            self._config = configparser.ConfigParser()
+            self._config = configparser.RawConfigParser()
             self._config.read_file(f, source=self._path)
             with contextlib.suppress(configparser.DuplicateSectionError):
                 self._config.add_section("insights-client")
