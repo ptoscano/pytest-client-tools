@@ -107,3 +107,40 @@ auto_config=False
     )
     conf.reload()
     assert not conf.auto_config
+
+
+@pytest.mark.parametrize(
+    "key_value",
+    [
+        True,
+        "/some/path",
+    ],
+)
+def test_config_cert_verify_read(key_value, tmp_path):
+    conf_file = tmp_path / "file.conf"
+    conf_file.write_text(
+        f"""[insights-client]
+cert_verify={key_value}
+"""
+    )
+    conf = InsightsClientConfig(conf_file)
+    assert isinstance(conf.cert_verify, type(key_value))
+    assert conf.cert_verify == key_value
+
+
+@pytest.mark.parametrize(
+    "key_value",
+    [
+        True,
+        "/some/path",
+    ],
+)
+def test_config_cert_verify_write(key_value, tmp_path):
+    conf_file = tmp_path / "file.conf"
+    conf_file.touch()
+    conf = InsightsClientConfig(conf_file)
+    conf.cert_verify = key_value
+    assert isinstance(conf.cert_verify, type(key_value))
+    conf.save()
+    conf_file_text = conf_file.read_text()
+    assert f"cert_verify={key_value}" in conf_file_text

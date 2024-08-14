@@ -138,6 +138,10 @@ class InsightsClientConfig:
         "upload_url",
         "username",
     }
+    # bool & string config keys
+    _KEYS_BOOL_STRING = {
+        "cert_verify",
+    }
 
     def __init__(self, path="/etc/insights-client/insights-client.conf"):
         self._path = path
@@ -166,7 +170,7 @@ class InsightsClientConfig:
             self._config.write(f, space_around_delimiters=False)
 
     def __getattr__(self, name):
-        if name in self._KEYS_BOOL:
+        if name in self._KEYS_BOOL | self._KEYS_BOOL_STRING:
             read_func = self._config.getboolean
         elif name in self._KEYS_INT:
             read_func = self._config.getint
@@ -177,13 +181,20 @@ class InsightsClientConfig:
         else:
             raise KeyError(name)
         try:
-            return read_func("insights-client", name)
+            try:
+                return read_func("insights-client", name)
+            except ValueError:
+                return self._config.get("insights-client", name)
         except configparser.NoOptionError:
             raise KeyError(name)
 
     def __setattr__(self, name, value):
         if name in (
-            self._KEYS_BOOL | self._KEYS_INT | self._KEYS_FLOAT | self._KEYS_STRING
+            self._KEYS_BOOL
+            | self._KEYS_INT
+            | self._KEYS_FLOAT
+            | self._KEYS_STRING
+            | self._KEYS_BOOL_STRING
         ):
             self._config.set("insights-client", name, str(value))
             return
