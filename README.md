@@ -6,6 +6,7 @@ Plugin for `pytest` to test RHSM client tools: `subscription-manager`,
 ## Requirements
 
 - requests
+- toml
 
 ## Installation
 

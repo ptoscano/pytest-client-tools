@@ -6,3 +6,4 @@ dynaconf
 flake8
 pytest>=4
 requests
+toml

@@ -5,10 +5,12 @@ import contextlib
 import functools
 import locale
 import logging
+import pathlib
 import shutil
 import subprocess
 
 import pytest
+import toml
 
 from .candlepin import Candlepin, ping_candlepin
 from .inventory import Inventory
@@ -225,6 +227,16 @@ def save_rhc_files(request):
 @pytest.fixture
 def rhc(save_rhc_files, test_config):
     rhc = Rhc()
+    config_file = pathlib.Path("/etc/rhc/config.toml")
+    try:
+        config = toml.loads(config_file.read_text())
+    except toml.TomlDecodeError as e:
+        LOGGER.warning(
+            "cannot load %s as TOML (skipping customizations): %s", config_file, e
+        )
+    else:
+        config["log-level"] = "trace"
+        config_file.write_text(toml.dumps(config))
     try:
         yield rhc
     finally:

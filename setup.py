@@ -31,6 +31,7 @@ setup(
         "dynaconf",
         "pytest>=4",
         "requests",
+        "toml",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
