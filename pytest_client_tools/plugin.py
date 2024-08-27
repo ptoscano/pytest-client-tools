@@ -230,6 +230,9 @@ def rhc(save_rhc_files, test_config):
     config_file = pathlib.Path("/etc/rhc/config.toml")
     try:
         config = toml.loads(config_file.read_text())
+    except FileNotFoundError:
+        # file not found, start from an empty config
+        config = {}
     except toml.TomlDecodeError as e:
         LOGGER.warning(
             "cannot load %s as TOML (skipping customizations): %s", config_file, e
