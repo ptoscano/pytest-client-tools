@@ -85,3 +85,28 @@ class Inventory:
                 f"returned for the current UUID ({self._insights_client.uuid})"
             )
         return res_json["results"][0]["system_profile"]
+
+    def this_system_tags(self):
+        """
+        Query Inventory for the tags of the current system.
+
+        This assumes the current system is already registered with
+        `insights-client`.
+
+        :return: The dict of the tags of the current system in Inventory
+        :rtype: dict
+        """
+        if not self._insights_client:
+            raise RuntimeError(
+                "Inventory.this_system_tags(): cannot invoke without insights_client"
+            )
+        this = self.this_system()
+        inventory_id = this["id"]
+        path = f"hosts/{inventory_id}/tags"
+        res_json = self.get(path).json()
+        if res_json["total"] != 1:
+            raise RuntimeError(
+                f"Inventory.this_system_tags(): {res_json['total']} hosts "
+                f"returned for the current UUID ({self._insights_client.uuid})"
+            )
+        return res_json["results"][inventory_id]
