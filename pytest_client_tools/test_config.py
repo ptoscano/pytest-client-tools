@@ -30,6 +30,11 @@ class TestConfig:
             Validator("candlepin.activation_keys", is_type_of=list),
             Validator(
                 "candlepin.org",
+                is_type_of=str,
+                # Fix for a regression in dynaconf, can be removed with dynaconf>=3.3.0
+                # https://github.com/dynaconf/dynaconf/issues/1064
+                #  "Validator default string parsed to number"
+                cast=str,
                 must_exist=True,
                 when=Validator(
                     "candlepin.activation_keys",
