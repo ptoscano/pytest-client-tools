@@ -73,6 +73,11 @@ class Version:
         return f"Version({self.__str__()})"
 
 
+class ClientToolsPluginData:
+    def __init__(self):
+        self.running_data = {}
+
+
 class ArtifactsCollector:
     def __init__(self, name=None, module=None, cls=None):
         self._path = self._init_path(name, module, cls)

@@ -24,7 +24,7 @@ from .subscription_manager import (
 )
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
-from .util import NodeRunningData
+from .util import ClientToolsPluginData, NodeRunningData
 
 
 _MARKERS = {
@@ -46,13 +46,13 @@ def _save_and_archive(files, subdir):
             request = kwargs["request"]
             if request.scope == "session":
                 data_id = "<session>"
-                if data_id not in pytest._client_tools:
+                if data_id not in pytest._client_tools.running_data:
                     global_running_data = NodeRunningData()
-                    pytest._client_tools[data_id] = global_running_data
+                    pytest._client_tools.running_data[data_id] = global_running_data
             else:
                 data_id = request.node.nodeid
-            tmp_path = pytest._client_tools[data_id].tmp_path
-            artifacts_collector = pytest._client_tools[data_id].artifacts
+            tmp_path = pytest._client_tools.running_data[data_id].tmp_path
+            artifacts_collector = pytest._client_tools.running_data[data_id].artifacts
             backup_path = tmp_path / f"backup-{subdir}"
             backup_path.mkdir()
             for f in files:
@@ -330,17 +330,17 @@ def pytest_runtestloop(session):
     # set the log level for our logger to the effective one set by pytest;
     # this cannot be done in pytest_configure(), as it is not set yet
     LOGGER.setLevel(logging.getLogger().getEffectiveLevel())
-    pytest._client_tools = {}
+    pytest._client_tools = ClientToolsPluginData()
 
 
 def pytest_runtest_protocol(item, nextitem):
     node_running_data = NodeRunningData(item)
-    pytest._client_tools[item.nodeid] = node_running_data
+    pytest._client_tools.running_data[item.nodeid] = node_running_data
     logging.getLogger().addHandler(node_running_data.handler)
 
 
 def pytest_runtest_logfinish(nodeid, location):
-    node_running_data = pytest._client_tools.pop(nodeid)
+    node_running_data = pytest._client_tools.running_data.pop(nodeid)
     node_running_data.handler.close()
     if node_running_data.logfile.exists():
         node_running_data.artifacts.copy(node_running_data.logfile)
