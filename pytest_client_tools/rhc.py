@@ -33,9 +33,11 @@ class Rhc:
         :return: Whether `rhc` is registered
         :rtype: bool
         """
-        proc = self.run("status", "--format", "json")
-        doc = json.loads(proc.stdout)
-        return doc["rhsm_connected"]
+        proc = self.run("status", "--format", "json", check=False)
+        if proc.returncode in [0, 1]:
+            doc = json.loads(proc.stdout)
+            return doc["rhsm_connected"]
+        proc.check_returncode()
 
     @property
     def version(self):
