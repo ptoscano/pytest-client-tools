@@ -58,6 +58,12 @@ class RestClient:
         """
         return self._request("GET", path, **kwargs)
 
+    def delete(self, path, **kwargs):
+        """
+        Perform a DELETE REST call.
+        """
+        return self._request("DELETE", path, **kwargs)
+
     def post(self, path, data, **kwargs):
         """
         Perform a POST REST call.
