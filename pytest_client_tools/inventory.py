@@ -35,6 +35,12 @@ class Inventory:
         """
         return self._rest_client.get(path, **kwargs)
 
+    def delete(self, path, **kwargs):
+        """
+        Perform a DELETE REST call.
+        """
+        return self._rest_client.delete(path, **kwargs)
+
     def this_system(self):
         """
         Query Inventory for the current system.
