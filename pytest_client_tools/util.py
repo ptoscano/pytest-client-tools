@@ -118,6 +118,7 @@ class NodeRunningData:
                 "%(asctime)s: %(name)s: %(funcName)s: %(levelname)s: %(message)s"
             )
         )
+        self.timestamp = None
 
 
 def logged_run(*args, **kwargs):

@@ -2,12 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 import contextlib
+import datetime
 import functools
 import locale
 import logging
 import pathlib
 import shutil
 import subprocess
+import time
+import uuid
 
 import pytest
 import toml
@@ -24,7 +27,7 @@ from .subscription_manager import (
 )
 from .rhc import Rhc, RHC_FILES_TO_SAVE
 from .test_config import TestConfig
-from .util import ClientToolsPluginData, NodeRunningData
+from .util import ClientToolsPluginData, NodeRunningData, logged_run
 
 
 _MARKERS = {
@@ -337,6 +340,8 @@ def pytest_runtest_protocol(item, nextitem):
     node_running_data = NodeRunningData(item)
     pytest._client_tools.running_data[item.nodeid] = node_running_data
     logging.getLogger().addHandler(node_running_data.handler)
+    if pytest._client_tools.log_selinux_audits:
+        node_running_data.timestamp = datetime.datetime.now()
 
 
 def pytest_runtest_logfinish(nodeid, location):
@@ -344,4 +349,46 @@ def pytest_runtest_logfinish(nodeid, location):
     node_running_data.handler.close()
     if node_running_data.logfile.exists():
         node_running_data.artifacts.copy(node_running_data.logfile)
+    if pytest._client_tools.log_selinux_audits:
+        time.sleep(1)
+        marker = f"pytest-client-tools-{uuid.uuid4()}"
+        logged_run(
+            ["auditctl", "-m", marker],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        for _ in range(1, 100):
+            proc = logged_run(
+                f"ausearch -i -m user | grep -q {marker}",
+                check=False,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True,
+                text=True,
+            )
+            if proc.returncode == 0:
+                break
+            time.sleep(0.1)
+        proc_ausearch = logged_run(
+            [
+                "ausearch",
+                "-i",
+                "-m",
+                "avc",
+                "-ts",
+                node_running_data.timestamp.strftime("%x"),
+                node_running_data.timestamp.strftime("%T"),
+            ],
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        if proc_ausearch.returncode not in [0, 1]:
+            proc_ausearch.check_returncode()
+        if proc_ausearch.stdout:
+            node_running_data.artifacts.write_text("selinux.log", proc_ausearch.stdout)
     logging.getLogger().handlers.remove(node_running_data.handler)
