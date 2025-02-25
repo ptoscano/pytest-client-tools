@@ -97,6 +97,9 @@ class ArtifactsCollector:
         self._path.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, self._path)
 
+    def write_text(self, fn, data):
+        (self._path / fn).write_text(data)
+
 
 class NodeRunningData:
     def __init__(self, item=None):
