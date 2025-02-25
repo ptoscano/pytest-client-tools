@@ -76,6 +76,7 @@ class Version:
 class ClientToolsPluginData:
     def __init__(self):
         self.running_data = {}
+        self.log_selinux_audits = should_log_selinux_denials()
 
 
 class ArtifactsCollector:
@@ -132,3 +133,39 @@ def logged_run(*args, **kwargs):
     if check:
         proc.check_returncode()
     return proc
+
+
+def should_log_selinux_denials():
+    def require_tool(tool):
+        if not shutil.which(tool):
+            LOGGER.info(
+                f"disabling SELinux denials collection because '{tool}' is "
+                "not available"
+            )
+            return False
+        return True
+
+    for tool in ["ausearch", "auditctl"]:
+        if not require_tool(tool):
+            return False
+    proc_systemctl = logged_run(
+        [
+            "systemctl",
+            "show",
+            "--property",
+            "SubState",
+            "--value",
+            "auditd.service",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    auditd_status = proc_systemctl.stdout.strip()
+    if auditd_status not in ["running"]:
+        LOGGER.info(
+            "disabling SELinux denials collection because auditd is not running "
+            f"(status: {auditd_status})"
+        )
+        return False
+    return True
