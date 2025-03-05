@@ -47,15 +47,14 @@ def _save_and_archive(files, subdir):
         @functools.wraps(func)
         def function_wrapper(*args, **kwargs):
             request = kwargs["request"]
+            running_data = None
             if request.scope == "session":
-                data_id = "<session>"
-                if data_id not in pytest._client_tools.running_data:
-                    global_running_data = NodeRunningData()
-                    pytest._client_tools.running_data[data_id] = global_running_data
+                running_data = pytest._client_tools.global_running_data
             else:
-                data_id = request.node.nodeid
-            tmp_path = pytest._client_tools.running_data[data_id].tmp_path
-            artifacts_collector = pytest._client_tools.running_data[data_id].artifacts
+                running_data = pytest._client_tools.running_data[request.node.nodeid]
+            assert running_data
+            tmp_path = running_data.tmp_path
+            artifacts_collector = running_data.artifacts
             backup_path = tmp_path / f"backup-{subdir}"
             backup_path.mkdir()
             for f in files:

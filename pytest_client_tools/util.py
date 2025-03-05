@@ -76,6 +76,7 @@ class Version:
 class ClientToolsPluginData:
     def __init__(self):
         self.running_data = {}
+        self.global_running_data = NodeRunningData()
         self.log_selinux_audits = should_log_selinux_denials()
 
 
