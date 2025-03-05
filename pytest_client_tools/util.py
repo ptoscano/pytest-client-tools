@@ -121,6 +121,11 @@ class NodeRunningData:
         )
         self.timestamp = None
 
+    def archive_test_log(self):
+        self.handler.close()
+        if self.logfile.exists():
+            self.artifacts.copy(self.logfile)
+
 
 def logged_run(*args, **kwargs):
     LOGGER.debug("running %s with options %s", args, kwargs)

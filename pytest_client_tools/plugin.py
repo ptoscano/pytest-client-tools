@@ -345,9 +345,7 @@ def pytest_runtest_protocol(item, nextitem):
 
 def pytest_runtest_logfinish(nodeid, location):
     node_running_data = pytest._client_tools.running_data.pop(nodeid)
-    node_running_data.handler.close()
-    if node_running_data.logfile.exists():
-        node_running_data.artifacts.copy(node_running_data.logfile)
+    node_running_data.archive_test_log()
     if pytest._client_tools.log_selinux_audits:
         time.sleep(1)
         marker = f"pytest-client-tools-{uuid.uuid4()}"
