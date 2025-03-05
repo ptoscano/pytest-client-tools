@@ -326,13 +326,13 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{mark}: {description}")
     config.addinivalue_line("markers", "jira(id): test for jira cards")
     locale.setlocale(locale.LC_ALL, "C.UTF-8")
+    pytest._client_tools = ClientToolsPluginData()
 
 
 def pytest_runtestloop(session):
     # set the log level for our logger to the effective one set by pytest;
     # this cannot be done in pytest_configure(), as it is not set yet
     LOGGER.setLevel(logging.getLogger().getEffectiveLevel())
-    pytest._client_tools = ClientToolsPluginData()
 
 
 def pytest_runtest_protocol(item, nextitem):
