@@ -338,6 +338,7 @@ def pytest_runtestloop(session):
 def pytest_runtest_protocol(item, nextitem):
     node_running_data = NodeRunningData(item)
     pytest._client_tools.running_data[item.nodeid] = node_running_data
+    LOGGER.handlers.remove(pytest._client_tools.global_running_data.handler)
     logging.getLogger().addHandler(node_running_data.handler)
     if pytest._client_tools.log_selinux_audits:
         node_running_data.timestamp = datetime.datetime.now()
@@ -389,6 +390,7 @@ def pytest_runtest_logfinish(nodeid, location):
         if proc_ausearch.stdout:
             node_running_data.artifacts.write_text("selinux.log", proc_ausearch.stdout)
     logging.getLogger().handlers.remove(node_running_data.handler)
+    LOGGER.addHandler(pytest._client_tools.global_running_data.handler)
 
 
 def pytest_sessionfinish(session, exitstatus):
