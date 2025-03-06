@@ -77,6 +77,8 @@ class ClientToolsPluginData:
     def __init__(self):
         self.running_data = {}
         self.global_running_data = NodeRunningData()
+        self.global_running_data.handler.setLevel(logging.DEBUG)
+        LOGGER.addHandler(self.global_running_data.handler)
         self.log_selinux_audits = should_log_selinux_denials()
 
 

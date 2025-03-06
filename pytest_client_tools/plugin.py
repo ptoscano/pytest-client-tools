@@ -389,3 +389,7 @@ def pytest_runtest_logfinish(nodeid, location):
         if proc_ausearch.stdout:
             node_running_data.artifacts.write_text("selinux.log", proc_ausearch.stdout)
     logging.getLogger().handlers.remove(node_running_data.handler)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    pytest._client_tools.global_running_data.archive_test_log()
