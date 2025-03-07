@@ -7,7 +7,7 @@ import subprocess
 import uuid
 
 from . import SystemNotRegisteredError
-from .util import SavedFile, logged_run
+from .util import SavedFile, logged_run, redact_arguments
 
 
 SUBMAN_FILES_TO_SAVE = (
@@ -83,12 +83,24 @@ class SubscriptionManager:
         :return: The result of the command execution
         :rtype: subprocess.CompletedProcess
         """
+        logged_args = redact_arguments(
+            list(args),
+            [
+                "--activationkey",
+                "--org",
+                "--password",
+                "--server.proxy_password",
+                "--server.proxy_user",
+                "--username",
+            ],
+        )
         return logged_run(
             ["subscription-manager"] + list(args),
             check=check,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=text,
+            logged_args=logged_args,
         )
 
     def config(self, **kwargs):

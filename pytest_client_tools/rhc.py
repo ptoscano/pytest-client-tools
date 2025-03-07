@@ -6,7 +6,7 @@ import pathlib
 import re
 import subprocess
 
-from .util import SavedFile, logged_run, Version
+from .util import SavedFile, logged_run, Version, redact_arguments
 
 
 RHC_FILES_TO_SAVE = (
@@ -72,12 +72,22 @@ class Rhc:
         :return: The result of the command execution
         :rtype: subprocess.CompletedProcess
         """
+        logged_args = redact_arguments(
+            list(args),
+            [
+                "--activation-key",
+                "--organization",
+                "--password",
+                "--username",
+            ],
+        )
         return logged_run(
             ["rhc"] + list(args),
             check=check,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=text,
+            logged_args=logged_args,
         )
 
     def connect(
