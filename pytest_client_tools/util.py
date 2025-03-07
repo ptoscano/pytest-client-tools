@@ -131,17 +131,27 @@ class NodeRunningData:
 
 
 def logged_run(*args, **kwargs):
-    LOGGER.debug("running %s with options %s", args, kwargs)
+    logged_args = kwargs.pop("logged_args", None)
+    LOGGER.debug(
+        "running %s with options %s", logged_args if logged_args else args, kwargs
+    )
     check = kwargs.pop("check", False)
     # switch "text" (if present) into "universal_newlines" for Python < 3.7
     if sys.version_info[:2] < (3, 7):
         text = kwargs.pop("text", None)
         if text is not None:
             kwargs["universal_newlines"] = text
-    proc = subprocess.run(*args, **kwargs)
-    LOGGER.debug("result: %s", proc)
-    if check:
-        proc.check_returncode()
+    try:
+        proc = subprocess.run(*args, **kwargs)
+        if logged_args:
+            proc.args = logged_args
+        LOGGER.debug("result: %s", proc)
+        if check:
+            proc.check_returncode()
+    except subprocess.SubprocessError as e:
+        if hasattr(e, "cmd") and logged_args:
+            e.cmd = logged_args
+        raise e from None
     return proc
 
 
