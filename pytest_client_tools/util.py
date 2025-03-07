@@ -4,6 +4,7 @@
 import dataclasses
 import functools
 import logging
+import os
 import pathlib
 import shutil
 import subprocess
@@ -154,6 +155,12 @@ def should_log_selinux_denials():
             return False
         return True
 
+    if os.environ.get("PYTEST_CLIENT_TOOLS_DISABLE_SELINUX", None):
+        LOGGER.info(
+            "disabling SELinux denials collection because the environment "
+            " variable PYTEST_CLIENT_TOOLS_DISABLE_SELINUX is set"
+        )
+        return False
     for tool in ["ausearch", "auditctl"]:
         if not require_tool(tool):
             return False
