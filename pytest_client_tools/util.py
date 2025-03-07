@@ -185,3 +185,27 @@ def should_log_selinux_denials():
         )
         return False
     return True
+
+
+def redact_arguments(args, redact_list):
+    REDACTED_MARK = "<redacted>"
+    new_args = []
+    to_redact = False
+    for arg in args:
+        if to_redact:
+            new_args.append(REDACTED_MARK)
+            to_redact = False
+            continue
+        if arg in redact_list:
+            new_args.append(arg)
+            to_redact = True
+            continue
+        redact_item = next(
+            (item for item in redact_list if arg.startswith(item + "=")),
+            None,
+        )
+        if redact_item:
+            new_args.append(f"{redact_item}={REDACTED_MARK}")
+            continue
+        new_args.append(arg)
+    return new_args
